@@ -35,4 +35,9 @@ public class WalletController {
         String balance = walletService.getBalance(address);
         return ResponseEntity.ok(Map.of("address", address, "balance", balance));
     }
+    @PostMapping("/{address}/faucet")
+    public ResponseEntity<Map<String, String>> requestFaucet(@PathVariable String address) {
+        String result = walletService.requestFaucet(address);
+        return ResponseEntity.ok(Map.of("address", address, "result", result));
+    }
 }

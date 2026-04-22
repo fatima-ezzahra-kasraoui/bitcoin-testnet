@@ -9,4 +9,5 @@ public interface TransactionRepository extends MongoRepository<Transaction, Stri
     List<Transaction> findByFromAddress(String fromAddress);
     List<Transaction> findByFromAddressOrToAddress(String fromAddress, String toAddress);
     Optional<Transaction> findByTxId(String txId);
+    List<Transaction> findByStatus(String status);
 }

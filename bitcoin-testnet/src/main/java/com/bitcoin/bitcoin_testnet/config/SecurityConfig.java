@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Routes publiques (sans token)
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/status").permitAll()
                         // Toutes les autres routes nécessitent un token
                         .anyRequest().authenticated()
                 )

@@ -342,3 +342,75 @@
 .wallet-card-wrapper:has(.transactions-panel) .wallet-card {
   border-radius: 12px 12px 0 0;
 }
+
+/* Ajoute à la fin de ton fichier CSS */
+
+.btn-faucet {
+  background: linear-gradient(135deg, #1a2a3a 0%, #0d1a24 100%);
+  border: 1px solid #f7931a44;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  color: #f7931a;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-faucet:hover {
+  background: #f7931a15;
+  border-color: #f7931a;
+  color: #f7931a;
+  transform: translateY(-1px);
+}
+
+/* Style pour le message de copie (toast) */
+.copy-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  border: 1px solid #f7931a;
+  border-radius: 8px;
+  padding: 12px 24px;
+  color: #f7931a;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  z-index: 1000;
+  animation: fadeOut 2s ease-in-out;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  70% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+/* Style pour le bouton Mon Profil */
+.btn-profile {
+  background: linear-gradient(135deg, #1a2a3a 0%, #0d1a24 100%);
+  border: 1px solid #f7931a44;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  color: #f7931a;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-profile:hover {
+  background: #f7931a15;
+  border-color: #f7931a;
+  color: #f7931a;
+  transform: translateY(-1px);
+}
+
+.btn-profile:active {
+  transform: translateY(1px);
+}

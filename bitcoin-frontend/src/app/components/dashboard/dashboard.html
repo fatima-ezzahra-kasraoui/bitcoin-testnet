@@ -5,10 +5,16 @@
       <div>
         <span class="brand">Bitcoin TestNet</span>
         <span class="network-badge">TESTNET</span>
+        <span class="status-badge" [class.connected]="isConnected" [class.disconnected]="!isConnected">
+          {{ isConnected ? '🟢 Connected (' + peerCount + ' peers)' : '🔴 Disconnected' }}
+        </span>
       </div>
     </div>
     <div class="topbar-right">
       <span class="user-label">{{ userId }}</span>
+      <button class="btn-profile" (click)="goToProfile()">
+        👤 Mon Profil
+      </button>
       <button class="btn-logout" (click)="logout()">Déconnexion</button>
     </div>
   </div>
@@ -32,12 +38,16 @@
             <div class="wallet-info">
               <span class="wallet-label">{{ wallet.label }}</span>
               <span class="wallet-address">{{ wallet.address }}</span>
+              <span class="wallet-balance">{{ balances[wallet.address] || '...' }}</span>
               <span class="wallet-date">Créé le {{ wallet.createdAt | date:'dd MMM yyyy' }}</span>
             </div>
           </div>
           <div class="wallet-actions">
             <button class="btn-detail" (click)="toggleTransactions(wallet.address)">
               {{ selectedWallet === wallet.address ? 'Masquer' : 'Transactions' }}
+            </button>
+            <button class="btn-faucet" (click)="openFaucet(wallet.address)">
+              🌐 Obtenir des BTC
             </button>
             <button class="btn-detail" (click)="goToWallet()">Envoyer</button>
           </div>
@@ -54,7 +64,7 @@
             <div class="tx-row">
               <div class="tx-info">
                 <span class="tx-type" [class.tx-received]="tx.toAddress === wallet.address"
-                                      [class.tx-sent]="tx.fromAddress === wallet.address">
+                      [class.tx-sent]="tx.fromAddress === wallet.address">
                   {{ tx.toAddress === wallet.address ? 'Reçu' : 'Envoyé' }}
                 </span>
                 <span class="tx-address">
@@ -65,7 +75,22 @@
                 <span class="tx-amount" [class.tx-amount-received]="tx.toAddress === wallet.address">
                   {{ tx.toAddress === wallet.address ? '+' : '-' }}{{ tx.amount }} sat
                 </span>
-                <span class="tx-status">{{ tx.status }}</span>
+                <span class="tx-status" [class.confirmed]="tx.status === 'CONFIRMED'"
+                      [class.pending]="tx.status === 'PENDING'"
+                      [class.failed]="tx.status === 'FAILED'">
+
+                  <ng-container *ngIf="tx.status === 'PENDING'">
+                    En attente ⏳ ({{ tx.confirmations }}/3)
+                  </ng-container>
+
+                  <ng-container *ngIf="tx.status === 'CONFIRMED'">
+                    Confirmée ✅ ({{ tx.confirmations }} confirmation{{ tx.confirmations > 1 ? 's' : '' }})
+                  </ng-container>
+
+                  <ng-container *ngIf="tx.status === 'FAILED'">
+                    Échouée ❌
+                  </ng-container>
+                </span>
               </div>
             </div>
           </div>

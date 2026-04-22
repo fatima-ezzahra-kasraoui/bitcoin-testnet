@@ -38,4 +38,25 @@ public class AuthService {
         String token = jwtService.generateToken(username);
         return Map.of("token", token);
     }
+    public void changePassword(String userId, String currentPassword, String newPassword) {
+        // 1. Vérifier que l'utilisateur existe
+        User user = userRepository.findByUsername(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        // 2. Vérifier l'ancien mot de passe
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Mot de passe actuel incorrect");
+        }
+
+        // 3. Vérifier la longueur du nouveau mot de passe
+        if (newPassword == null || newPassword.length() < 6) {
+            throw new RuntimeException("Le mot de passe doit avoir au moins 6 caractères");
+        }
+
+        // 4. Changer le mot de passe
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        System.out.println("✅ Mot de passe changé pour : " + userId);
+    }
 }
