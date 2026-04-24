@@ -18,7 +18,27 @@
         </div>
         <div class="form-group">
           <label>Adresse destination</label>
-          <input type="text" [(ngModel)]="toAddress" placeholder="Adresse destination" />
+          <input
+            type="text"
+            [(ngModel)]="toAddress"
+            (input)="filterContacts()"
+            (focus)="showSuggestions = true"
+            placeholder="Tapez une adresse ou sélectionnez un contact..."
+            class="form-input" />
+
+          <!-- Liste déroulante personnalisée -->
+          <div class="suggestions-dropdown" *ngIf="showSuggestions && filteredContacts.length > 0">
+            <div
+              *ngFor="let contact of filteredContacts"
+              class="suggestion-item"
+              (click)="selectContact(contact)">
+              <div class="suggestion-avatar">👤</div>
+              <div class="suggestion-info">
+                <span class="suggestion-label">{{ contact.label }}</span>
+                <span class="suggestion-address">{{ contact.address }}</span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="form-group">
           <label>Montant (satoshis)</label>

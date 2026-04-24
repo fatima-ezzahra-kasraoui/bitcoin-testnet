@@ -147,6 +147,26 @@ public class WalletService {
             return 0;
         }
     }
+    public Wallet updateLabel(String address, String newLabel) {
+        Wallet wallet = walletRepository.findByAddress(address)
+                .orElseThrow(() -> new RuntimeException("Wallet not found: " + address));
+        wallet.setLabel(newLabel);
+        return walletRepository.save(wallet);
+    }
+    public void deleteWallet(String address) {
+        Wallet wallet = walletRepository.findByAddress(address)
+                .orElseThrow(() -> new RuntimeException("Wallet not found: " + address));
+
+        // Vérifie le solde
+        String balanceStr = getBalance(address);
+        double balance = Double.parseDouble(balanceStr.replace(" BTC", "").replace(",", "."));
+
+        if (balance > 0) {
+            throw new RuntimeException("Impossible de supprimer : le wallet a un solde de " + balanceStr);
+        }
+
+        walletRepository.delete(wallet);
+    }
 
 
 }

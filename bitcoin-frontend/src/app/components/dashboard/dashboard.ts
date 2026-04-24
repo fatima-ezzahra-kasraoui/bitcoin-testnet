@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { BitcoinService } from '../../services/bitcoin';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -115,8 +116,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToWallet() {
-    this.router.navigate(['/wallet']);
+  goToWallet(address: string) {
+    this.router.navigate(['/wallet'], { queryParams: { address: address } });
   }
 
   logout() {
@@ -125,5 +126,55 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+  confirmDelete(wallet: any) {
+    const confirmed = confirm(`Voulez-vous vraiment supprimer le wallet "${wallet.label}" ?\nSolde: ${this.balances[wallet.address] || '0 BTC'}`);
+    if (confirmed) {
+      this.deleteWallet(wallet.address);
+    }
+  }
+
+  deleteWallet(address: string) {
+    this.bitcoinService.deleteWallet(address).subscribe({
+      next: () => {
+        this.wallets = this.wallets.filter(w => w.address !== address);
+        delete this.balances[address];
+        delete this.transactions[address];
+        alert('Wallet supprimé avec succès');
+      },
+      error: (err) => {
+        const message = err.error?.message || err.message || 'Erreur lors de la suppression';
+        alert(message);
+      }
+    });
+  }
+
+  editingWallet: string | null = null;
+  editLabelValue = '';
+
+  startEdit(wallet: any) {
+    this.editingWallet = wallet.address;
+    this.editLabelValue = wallet.label;
+  }
+
+  saveLabel(wallet: any) {
+    if (this.editLabelValue && this.editLabelValue !== wallet.label) {
+      this.bitcoinService.updateWalletLabel(wallet.address, this.editLabelValue).subscribe({
+        next: (res) => {
+          wallet.label = res.label;
+          this.editingWallet = null;
+        },
+        error: () => alert('Erreur lors de la modification')
+      });
+    } else {
+      this.editingWallet = null;
+    }
+  }
+
+  cancelEdit() {
+    this.editingWallet = null;
+  }
+  goToContacts() {
+    this.router.navigate(['/contacts']);
   }
 }

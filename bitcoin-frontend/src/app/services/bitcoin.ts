@@ -66,4 +66,32 @@ export class BitcoinService {
       { userId, currentPassword, newPassword },
       { headers: this.getHeaders() });
   }
+  deleteWallet(address: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/wallets/${address}`, {
+      headers: this.getHeaders()
+    });
+  }
+  updateWalletLabel(address: string, label: string): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/wallets/${address}/label`, { label }, {
+      headers: this.getHeaders()
+    });
+  }
+  // Contacts
+  getContacts(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/contacts`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  addContact(label: string, address: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/contacts`, { label, address }, {
+      headers: this.getHeaders()
+    });
+  }
+
+  deleteContact(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/contacts/${id}`, {
+      headers: this.getHeaders()
+    });
+  }
 }

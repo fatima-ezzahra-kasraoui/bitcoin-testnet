@@ -12,6 +12,9 @@
     </div>
     <div class="topbar-right">
       <span class="user-label">{{ userId }}</span>
+      <button class="btn-contacts" (click)="goToContacts()">
+        📒 Contacts
+      </button>
       <button class="btn-profile" (click)="goToProfile()">
         👤 Mon Profil
       </button>
@@ -36,7 +39,16 @@
           <div class="wallet-card-left">
             <div class="wallet-icon">₿</div>
             <div class="wallet-info">
-              <span class="wallet-label">{{ wallet.label }}</span>
+              <span *ngIf="editingWallet !== wallet.address" class="wallet-label" (click)="startEdit(wallet)">
+                {{ wallet.label }}
+              </span>
+              <input *ngIf="editingWallet === wallet.address"
+                     type="text"
+                     [(ngModel)]="editLabelValue"
+                     (blur)="saveLabel(wallet)"
+                     (keyup.enter)="saveLabel(wallet)"
+                     (keyup.escape)="cancelEdit()"
+                     class="edit-label-input" />
               <span class="wallet-address">{{ wallet.address }}</span>
               <span class="wallet-balance">{{ balances[wallet.address] || '...' }}</span>
               <span class="wallet-date">Créé le {{ wallet.createdAt | date:'dd MMM yyyy' }}</span>
@@ -49,7 +61,10 @@
             <button class="btn-faucet" (click)="openFaucet(wallet.address)">
               🌐 Obtenir des BTC
             </button>
-            <button class="btn-detail" (click)="goToWallet()">Envoyer</button>
+            <button class="btn-detail" (click)="goToWallet(wallet.address)">Envoyer</button>
+            <button class="btn-delete" (click)="confirmDelete(wallet)">
+              🗑️ Supprimer
+            </button>
           </div>
         </div>
 
@@ -100,7 +115,7 @@
     </div>
 
     <div class="action-bar">
-      <button class="btn-action" (click)="goToWallet()">Envoyer une transaction</button>
+      <button class="btn-action" (click)="goToWallet(wallets[0]?.address)">Envoyer une transaction</button>
     </div>
   </div>
 </div>

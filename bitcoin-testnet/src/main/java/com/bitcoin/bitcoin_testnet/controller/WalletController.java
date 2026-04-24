@@ -40,4 +40,17 @@ public class WalletController {
         String result = walletService.requestFaucet(address);
         return ResponseEntity.ok(Map.of("address", address, "result", result));
     }
+    @PatchMapping("/{address}/label")
+    public ResponseEntity<Map<String, String>> updateWalletLabel(
+            @PathVariable String address,
+            @RequestBody Map<String, String> request) {
+        String newLabel = request.get("label");
+        Wallet updated = walletService.updateLabel(address, newLabel);
+        return ResponseEntity.ok(Map.of("address", updated.getAddress(), "label", updated.getLabel()));
+    }
+    @DeleteMapping("/{address}")
+    public ResponseEntity<Map<String, String>> deleteWallet(@PathVariable String address) {
+        walletService.deleteWallet(address);
+        return ResponseEntity.ok(Map.of("message", "Wallet supprimé avec succès", "address", address));
+    }
 }

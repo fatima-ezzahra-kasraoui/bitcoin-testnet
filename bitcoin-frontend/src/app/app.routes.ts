@@ -3,6 +3,7 @@ import { LoginComponent } from './components/login/login';
 import { DashboardComponent } from './components/dashboard/dashboard';
 import { WalletComponent } from './components/wallet/wallet';
 import { ProfileComponent } from './components/profile/profile';
+import { ContactsComponent } from './components/contacts/contacts';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -10,5 +11,6 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'wallet', component: WalletComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'contacts', component: ContactsComponent },
   { path: '**', redirectTo: '/login' }
 ];
