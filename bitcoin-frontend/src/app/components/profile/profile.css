@@ -1,0 +1,454 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.profile-container {
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Topbar */
+.topbar {
+  background: #111;
+  border-bottom: 1px solid #1f1f1f;
+  padding: 0 40px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btc-icon {
+  width: 38px;
+  height: 38px;
+  background: #f7931a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: #000;
+}
+
+.brand {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.network-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #f7931a;
+  background: #f7931a18;
+  border: 1px solid #f7931a44;
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-left: 10px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-label {
+  font-size: 13px;
+  color: #666;
+}
+
+.btn-nav {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-nav:hover {
+  border-color: #f7931a;
+  color: #f7931a;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid #dc2626;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #dc2626;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+.main-content {
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Portfolio Card */
+.portfolio-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  border: 1px solid #f7931a33;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.portfolio-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.btc-icon-small {
+  width: 36px;
+  height: 36px;
+  background: #f7931a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: #000;
+}
+
+.portfolio-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.portfolio-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stat-sats {
+  font-size: 11px;
+  color: #f7931a;
+  font-family: monospace;
+}
+
+.positive { color: #4caf50 !important; }
+.negative { color: #f7931a !important; }
+
+/* Wallets Section */
+.wallets-section {
+  background: #111;
+  border: 1px solid #1f1f1f;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.section-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #1f1f1f;
+  padding-bottom: 12px;
+}
+
+.section-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.wallet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wallet-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #0d0d0d;
+  border-radius: 10px;
+}
+
+.wallet-icon-mini {
+  width: 32px;
+  height: 32px;
+  background: #f7931a15;
+  border: 1px solid #f7931a33;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #f7931a;
+}
+
+.wallet-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wallet-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.wallet-address {
+  font-size: 10px;
+  color: #666;
+  font-family: monospace;
+}
+
+.wallet-balance-mini {
+  font-size: 12px;
+  font-weight: 600;
+  color: #f7931a;
+}
+
+/* Security Card */
+.security-card {
+  background: #111;
+  border: 1px solid #1f1f1f;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.security-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #1f1f1f;
+  padding-bottom: 16px;
+}
+
+.lock-icon {
+  font-size: 20px;
+}
+
+.security-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.form-group input {
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #f7931a;
+}
+
+.btn-change-password {
+  background: #f7931a;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.btn-change-password:hover {
+  background: #e8841a;
+}
+
+.error-msg {
+  color: #dc2626;
+  font-size: 12px;
+  background: #dc262615;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.success-msg {
+  color: #4caf50;
+  font-size: 12px;
+  background: #4caf5015;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #555;
+  font-size: 14px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #1f1f1f;
+  border-top-color: #f7931a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.toast-message {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 13px;
+  z-index: 1000;
+  animation: fadeOut 3s ease-in-out;
+}
+
+.toast-message.success {
+  background: #1a2a1a;
+  border: 1px solid #4caf50;
+  color: #4caf50;
+}
+
+.toast-message.error {
+  background: #2a1a1a;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+/* Style pour le wrapper du mot de passe avec œil */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  flex: 1;
+  padding-right: 45px;
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+
+.password-input-wrapper input:focus {
+  outline: none;
+  border-color: #f7931a;
+}
+
+/* Bouton œil */
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  margin: 0;
+  color: #888;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password-btn:hover {
+  color: #f7931a;
+  transform: scale(1.1);
+}
+
+.toggle-password-btn:active {
+  transform: scale(0.95);
+}

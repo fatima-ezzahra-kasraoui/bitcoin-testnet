@@ -1,0 +1,145 @@
+<div class="profile-container">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="btc-icon">₿</div>
+      <div>
+        <span class="brand">Bitcoin TestNet</span>
+        <span class="network-badge">PROFIL</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="user-label">{{ userId }}</span>
+      <button class="btn-nav" (click)="goToDashboard()">Dashboard</button>
+      <button class="btn-logout" (click)="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Message global -->
+    <div *ngIf="message" class="toast-message" [class.success]="messageType === 'success'" [class.error]="messageType === 'error'">
+      {{ message }}
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Chargement de votre portfolio...</p>
+    </div>
+
+    <div *ngIf="!isLoading">
+      <!-- Section Portfolio -->
+      <div class="portfolio-card">
+        <div class="portfolio-header">
+          <div class="btc-icon-small">₿</div>
+          <h2>Mon Portfolio</h2>
+        </div>
+
+        <div class="portfolio-stats">
+          <div class="stat">
+            <span class="stat-label">Solde total</span>
+            <span class="stat-value">{{ portfolioStats.totalBTC }} BTC</span>
+            <span class="stat-sats">{{ portfolioStats.totalSats | number }} sats</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Wallets</span>
+            <span class="stat-value">{{ portfolioStats.totalWallets }}</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Total reçu</span>
+            <span class="stat-value positive">+{{ portfolioStats.totalReceived }} BTC</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Total envoyé</span>
+            <span class="stat-value negative">-{{ portfolioStats.totalSent }} BTC</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Transactions</span>
+            <span class="stat-value">{{ portfolioStats.totalTransactions }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Wallets -->
+      <div class="wallets-section">
+        <div class="section-header">
+          <h3>Mes wallets</h3>
+        </div>
+
+        <div *ngIf="wallets.length === 0" class="empty-state">
+          <p>Aucun wallet créé pour l'instant.</p>
+        </div>
+
+        <div class="wallet-list">
+          <div *ngFor="let wallet of wallets" class="wallet-item">
+            <div class="wallet-icon-mini">₿</div>
+            <div class="wallet-details">
+              <span class="wallet-label">{{ wallet.label }}</span>
+              <span class="wallet-address">{{ wallet.address }}</span>
+            </div>
+            <div class="wallet-balance-mini">
+              {{ balances[wallet.address] || '...' }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section Sécurité -->
+      <div class="security-card">
+        <div class="security-header">
+          <div class="lock-icon">🔒</div>
+          <h3>Sécurité</h3>
+        </div>
+
+        <div class="password-form">
+
+          <!-- Mot de passe actuel avec œil -->
+          <div class="form-group">
+            <label>Mot de passe actuel</label>
+            <div class="password-input-wrapper">
+              <input [type]="showCurrentPassword ? 'text' : 'password'"
+                     [(ngModel)]="currentPassword"
+                     placeholder="••••••••" />
+              <button type="button" class="toggle-password-btn" (click)="toggleCurrentPassword()">
+                {{ showCurrentPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Nouveau mot de passe avec œil -->
+          <div class="form-group">
+            <label>Nouveau mot de passe</label>
+            <div class="password-input-wrapper">
+              <input [type]="showNewPassword ? 'text' : 'password'"
+                     [(ngModel)]="newPassword"
+                     placeholder="Minimum 6 caractères" />
+              <button type="button" class="toggle-password-btn" (click)="toggleNewPassword()">
+                {{ showNewPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Confirmer mot de passe avec œil -->
+          <div class="form-group">
+            <label>Confirmer le mot de passe</label>
+            <div class="password-input-wrapper">
+              <input [type]="showConfirmPassword ? 'text' : 'password'"
+                     [(ngModel)]="confirmPassword"
+                     placeholder="••••••••" />
+              <button type="button" class="toggle-password-btn" (click)="toggleConfirmPassword()">
+                {{ showConfirmPassword ? '🙈' : '👁️' }}
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="passwordError" class="error-msg">{{ passwordError }}</div>
+          <div *ngIf="passwordMessage" class="success-msg">{{ passwordMessage }}</div>
+
+          <button class="btn-change-password" (click)="changePassword()">
+            Changer le mot de passe
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
