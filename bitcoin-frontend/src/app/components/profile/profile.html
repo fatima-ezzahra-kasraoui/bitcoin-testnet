@@ -28,13 +28,13 @@
     </div>
 
     <div *ngIf="!isLoading">
+
       <!-- Section Portfolio -->
       <div class="portfolio-card">
         <div class="portfolio-header">
           <div class="btc-icon-small">₿</div>
           <h2>Mon Portfolio</h2>
         </div>
-
         <div class="portfolio-stats">
           <div class="stat">
             <span class="stat-label">Solde total</span>
@@ -65,11 +65,9 @@
         <div class="section-header">
           <h3>Mes wallets</h3>
         </div>
-
         <div *ngIf="wallets.length === 0" class="empty-state">
           <p>Aucun wallet créé pour l'instant.</p>
         </div>
-
         <div class="wallet-list">
           <div *ngFor="let wallet of wallets" class="wallet-item">
             <div class="wallet-icon-mini">₿</div>
@@ -90,10 +88,8 @@
           <div class="lock-icon">🔒</div>
           <h3>Sécurité</h3>
         </div>
-
         <div class="password-form">
 
-          <!-- Mot de passe actuel avec œil -->
           <div class="form-group">
             <label>Mot de passe actuel</label>
             <div class="password-input-wrapper">
@@ -106,7 +102,6 @@
             </div>
           </div>
 
-          <!-- Nouveau mot de passe avec œil -->
           <div class="form-group">
             <label>Nouveau mot de passe</label>
             <div class="password-input-wrapper">
@@ -119,7 +114,6 @@
             </div>
           </div>
 
-          <!-- Confirmer mot de passe avec œil -->
           <div class="form-group">
             <label>Confirmer le mot de passe</label>
             <div class="password-input-wrapper">
@@ -140,6 +134,110 @@
           </button>
         </div>
       </div>
+
+      <!-- MFA Section -->
+      <div class="mfa-section">
+        <h2>Two-Factor Authentication</h2>
+        <p class="section-desc">Add an extra layer of security to your account using Google Authenticator.</p>
+
+        <div class="mfa-status-row">
+          <div class="mfa-status">
+            <span class="status-badge" [class.enabled]="mfaEnabled" [class.disabled]="!mfaEnabled">
+              {{ mfaEnabled ? '🔒 Enabled' : '🔓 Disabled' }}
+            </span>
+            <span class="status-text">
+              {{ mfaEnabled ? 'Your account is protected with 2FA' : 'Your account is not protected with 2FA' }}
+            </span>
+          </div>
+          <button
+            class="btn-mfa-toggle"
+            [class.btn-disable]="mfaEnabled"
+            [class.btn-enable]="!mfaEnabled"
+            (click)="openMfaDialog(mfaEnabled ? 'disable' : 'enable')">
+            {{ mfaEnabled ? 'Disable MFA' : 'Enable MFA' }}
+          </button>
+        </div>
+
+        <p class="mfa-success" *ngIf="mfaMessage">{{ mfaMessage }}</p>
+
+        <!-- MFA Dialog -->
+        <div class="mfa-overlay" *ngIf="showMfaDialog" (click)="closeMfaDialog()">
+          <div class="mfa-dialog" (click)="$event.stopPropagation()">
+
+            <!-- Password confirmation step -->
+            <div *ngIf="!showMfaQr">
+              <h3>{{ mfaAction === 'enable' ? 'Enable' : 'Disable' }} Two-Factor Authentication</h3>
+              <p>Please confirm your password to continue</p>
+
+              <div class="dialog-form-group">
+                <label>Current Password</label>
+                <input
+                  type="password"
+                  [(ngModel)]="mfaConfirmPassword"
+                  placeholder="••••••••"
+                  (keyup.enter)="confirmMfaAction()"
+                  [disabled]="isProcessingMfa"
+                />
+              </div>
+
+              <p class="dialog-error" *ngIf="mfaError">{{ mfaError }}</p>
+
+              <div class="dialog-buttons">
+                <button class="btn-confirm" (click)="confirmMfaAction()" [disabled]="isProcessingMfa">
+                  {{ isProcessingMfa ? 'Processing...' : 'Confirm' }}
+                </button>
+                <button class="btn-cancel" (click)="closeMfaDialog()" [disabled]="isProcessingMfa">
+                  Cancel
+                </button>
+              </div>
+            </div>
+
+            <!-- QR Code setup step -->
+            <div *ngIf="showMfaQr">
+              <h3>Scan QR Code</h3>
+              <p>Scan this QR code with Google Authenticator</p>
+
+              <div class="dialog-qr">
+                <qrcode
+                  [qrdata]="mfaQrCodeUrl"
+                  [width]="180"
+                  [errorCorrectionLevel]="'M'">
+                </qrcode>
+              </div>
+
+              <div class="dialog-secret">
+                <p>Manual key:</p>
+                <code>{{ mfaSecretKey }}</code>
+              </div>
+
+              <div class="dialog-form-group">
+                <label>Enter the 6-digit code to confirm</label>
+                <input
+                  type="text"
+                  [(ngModel)]="mfaSetupCode"
+                  placeholder="000000"
+                  maxlength="6"
+                  (keyup.enter)="confirmMfaSetupCode()"
+                  [disabled]="isProcessingMfa"
+                />
+              </div>
+
+              <p class="dialog-error" *ngIf="mfaError">{{ mfaError }}</p>
+
+              <div class="dialog-buttons">
+                <button class="btn-confirm" (click)="confirmMfaSetupCode()" [disabled]="isProcessingMfa">
+                  {{ isProcessingMfa ? 'Verifying...' : 'Verify & Enable' }}
+                </button>
+                <button class="btn-cancel" (click)="closeMfaDialog()" [disabled]="isProcessingMfa">
+                  Cancel
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
