@@ -225,4 +225,55 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+    public Map<String, Object> getMfaStatus(String username) {
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    return Map.of(
+        "mfaEnabled", user.isMfaEnabled(),
+        "hasTotpSecret", user.getTotpSecret() != null
+    );
+}
+
+public Map<String, Object> enableMfa(String username, String password) {
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    // Confirm password before enabling — security check
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new RuntimeException("Invalid password");
+    }
+
+    // If user never set up TOTP — generate a new secret and return QR code
+    if (user.getTotpSecret() == null) {
+        MfaSetupResponse setup = generateTotpSecret(username);
+        return Map.of(
+            "mfaEnabled", false,
+            "requiresSetup", true,
+            "qrCodeUrl", setup.getQrCodeUrl(),
+            "secret", setup.getSecret()
+        );
+    }
+
+    // Already has secret — just re-enable
+    user.setMfaEnabled(true);
+    userRepository.save(user);
+    return Map.of(
+        "mfaEnabled", true,
+        "message", "MFA enabled successfully"
+    );
+  }
+
+    public Map<String, String> disableMfa(String username, String password) {
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    // Confirm password before disabling — security check
+    if (!passwordEncoder.matches(password, user.getPassword())) {
+        throw new RuntimeException("Invalid password");
+    }
+
+    user.setMfaEnabled(false);
+    userRepository.save(user);
+    return Map.of("message", "MFA disabled successfully");
+  }
 }

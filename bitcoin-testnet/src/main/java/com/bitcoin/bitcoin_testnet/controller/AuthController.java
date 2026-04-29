@@ -59,18 +59,42 @@ public class AuthController {
     public ResponseEntity<?> verifyMfa(
             @RequestHeader("Authorization") String authHeader,
             @Valid @RequestBody MfaVerifyRequest request) {
-
         String token = authHeader.substring(7);
-
-        // Security check — only pre-auth tokens can call this endpoint
-        // This prevents someone with a full JWT from calling this endpoint
         if (!jwtService.isPreAuthToken(token)) {
             return ResponseEntity
                 .status(403)
                 .body(Map.of("message", "Invalid token type. Use your pre-auth token."));
         }
-
         String username = jwtService.extractUsername(token);
         return ResponseEntity.ok(authService.verifyTotp(username, request.getCode()));
+    }
+
+    // Returns current MFA status for the logged-in user
+    @GetMapping("/mfa/status")
+    public ResponseEntity<Map<String, Object>> getMfaStatus(
+            @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+        return ResponseEntity.ok(authService.getMfaStatus(username));
+    }
+
+    // Enable MFA — requires password confirmation
+    @PostMapping("/mfa/enable")
+    public ResponseEntity<Map<String, Object>> enableMfa(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Map<String, String> request) {
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+        return ResponseEntity.ok(authService.enableMfa(username, request.get("password")));
+    }
+
+    // Disable MFA — requires password confirmation
+    @PostMapping("/mfa/disable")
+    public ResponseEntity<Map<String, String>> disableMfa(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Map<String, String> request) {
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+        return ResponseEntity.ok(authService.disableMfa(username, request.get("password")));
     }
 }
