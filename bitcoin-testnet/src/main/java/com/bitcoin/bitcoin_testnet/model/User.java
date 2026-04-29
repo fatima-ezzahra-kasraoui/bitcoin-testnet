@@ -17,6 +17,9 @@ public class User {
 
     private String password;
     private String role;
-    private String totpSecret;
-    private boolean mfaEnabled;
+
+
+     // MFA fields
+    private String totpSecret;   // stored AES-256 encrypted
+    private boolean mfaEnabled;  // false by default
 }
