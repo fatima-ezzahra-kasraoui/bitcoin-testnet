@@ -1,0 +1,82 @@
+<div class="mfa-setup-container">
+  <div class="mfa-card">
+
+    <div class="mfa-header">
+      <div class="shield-icon">🔐</div>
+      <h1>Secure Your Account</h1>
+      <p>Set up Two-Factor Authentication with Google Authenticator</p>
+    </div>
+
+    <div *ngIf="isLoading" class="loading">
+      <p>Loading...</p>
+    </div>
+
+    <div *ngIf="!isLoading">
+
+      <!-- Step 1: Scan QR code -->
+      <div class="setup-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Download Google Authenticator</h3>
+          <p>Install Google Authenticator on your phone if you haven't already.</p>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Scan this QR Code</h3>
+          <p>Open Google Authenticator → tap + → Scan QR code</p>
+        </div>
+      </div>
+
+      <!-- QR Code -->
+      <div class="qr-wrapper">
+        <qrcode
+          [qrdata]="qrCodeUrl"
+          [width]="200"
+          [errorCorrectionLevel]="'M'"
+          [colorDark]="'#000000'"
+          [colorLight]="'#ffffff'">
+        </qrcode>
+      </div>
+
+      <!-- Backup secret key -->
+      <div class="secret-box">
+        <p class="secret-label">Can't scan? Enter this key manually:</p>
+        <code class="secret-key">{{ secretKey }}</code>
+      </div>
+
+      <!-- Step 3: Confirm -->
+      <div class="setup-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Enter the 6-digit code</h3>
+          <p>Type the code shown in Google Authenticator to confirm setup</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <input
+          type="text"
+          [(ngModel)]="confirmCode"
+          placeholder="000000"
+          maxlength="6"
+          [disabled]="isVerifying"
+          (keyup.enter)="confirmSetup()"
+        />
+      </div>
+
+      <p class="error-msg" *ngIf="message">{{ message }}</p>
+
+      <button class="btn-primary" (click)="confirmSetup()" [disabled]="isVerifying">
+        {{ isVerifying ? 'Verifying...' : 'Confirm & Enable MFA' }}
+      </button>
+
+      <button class="btn-skip" (click)="skipSetup()" [disabled]="isVerifying">
+        Skip for now — I'll set this up later
+      </button>
+
+    </div>
+  </div>
+</div>
