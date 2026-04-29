@@ -26,6 +26,10 @@ export class BitcoinService {
     return this.http.post(`${this.apiUrl}/auth/login`, { username, password });
   }
 
+  checkUsername(username: string): Observable<any> {
+  return this.http.get(`${this.apiUrl}/auth/check-username?username=${username}`);
+  }
+
   // Status (public)
   getStatus(): Observable<any> {
     return this.http.get(`${this.apiUrl}/status`);

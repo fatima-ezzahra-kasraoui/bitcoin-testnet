@@ -15,28 +15,34 @@ export class LoginComponent {
   username = '';
   password = '';
   message = '';
+  isLoading = false;
 
   constructor(private bitcoinService: BitcoinService, private router: Router) {}
 
   login() {
+    if (!this.username || !this.password) {
+      this.message = 'Please fill in all fields';
+      return;
+    }
+
+    this.isLoading = true;
+    this.message = '';
+
     this.bitcoinService.login(this.username, this.password).subscribe({
       next: (res) => {
+        this.isLoading = false;
         localStorage.setItem('token', res.token);
         localStorage.setItem('userId', this.username);
         this.router.navigate(['/dashboard']);
       },
-      error: () => this.message = 'Erreur de connexion'
+      error: () => {
+        this.isLoading = false;
+        this.message = 'Invalid username or password';
+      }
     });
   }
 
-  register() {
-    this.bitcoinService.register(this.username, this.password).subscribe({
-      next: (res) => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('userId', this.username);
-        this.router.navigate(['/dashboard']);
-      },
-      error: () => this.message = 'Erreur d\'inscription'
-    });
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 }

@@ -1,0 +1,88 @@
+<div class="register-container">
+  <div class="register-card">
+
+    <div class="register-header">
+      <div class="btc-logo">₿</div>
+      <h1>Bitcoin TestNet</h1>
+      <p>Create your account</p>
+    </div>
+
+    <!-- Username field with availability check -->
+    <div class="form-group">
+      <label>Username</label>
+      <input
+        type="text"
+        [(ngModel)]="username"
+        placeholder="Choose a username"
+        [disabled]="isLoading"
+        (blur)="checkUsername()"
+      />
+      <span class="username-check checking" *ngIf="checkingUsername">Checking availability...</span>
+      <span class="username-check available" *ngIf="usernameAvailable === true">✓ Username available</span>
+      <span class="username-check taken" *ngIf="usernameAvailable === false">✗ Username already taken</span>
+    </div>
+
+    <!-- Password field with strength indicator -->
+    <div class="form-group">
+      <label>Password</label>
+      <input
+        type="password"
+        [(ngModel)]="password"
+        placeholder="At least 8 characters"
+        [disabled]="isLoading"
+      />
+    </div>
+
+    <!-- Password strength indicator -->
+    <div class="strength-bar" *ngIf="password.length > 0">
+      <div class="strength-label">
+             Password strength:
+             <span class="strength-text" [class]="getStrengthClass()">{{ getStrengthLabel() }}</span>
+      </div>
+      <div class="strength-track">
+        <div
+          class="strength-fill"
+          [class]="getStrengthClass()"
+          [style.width]="getStrengthWidth()">
+        </div>
+      </div>
+      <ul class="strength-hints">
+        <li [class.met]="password.length >= 8">At least 8 characters</li>
+        <li [class.met]="hasUppercase()">One uppercase letter (A-Z)</li>
+        <li [class.met]="hasNumber()">One number (0-9)</li>
+        <li [class.met]="hasSpecial()">One special character (!@#$...)</li>
+      </ul>
+    </div>
+
+    <!-- Confirm password field -->
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <input
+        type="password"
+        [(ngModel)]="confirmPassword"
+        placeholder="Repeat your password"
+        [disabled]="isLoading"
+        (keyup.enter)="register()"
+      />
+      <span class="username-check available"
+        *ngIf="confirmPassword.length > 0 && password === confirmPassword">
+        ✓ Passwords match
+      </span>
+      <span class="username-check taken"
+        *ngIf="confirmPassword.length > 0 && password !== confirmPassword">
+        ✗ Passwords do not match
+      </span>
+    </div>
+
+    <button class="btn-primary" (click)="register()" [disabled]="isLoading">
+      {{ isLoading ? 'Creating account...' : 'Create account' }}
+    </button>
+
+    <button class="btn-secondary" (click)="goToLogin()" [disabled]="isLoading">
+      Already have an account? Sign in
+    </button>
+
+    <p class="error-msg" *ngIf="message">{{ message }}</p>
+
+  </div>
+</div>

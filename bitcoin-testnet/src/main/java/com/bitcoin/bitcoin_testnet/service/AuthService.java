@@ -1,12 +1,14 @@
 package com.bitcoin.bitcoin_testnet.service;
 
-import com.bitcoin.bitcoin_testnet.model.User;
-import com.bitcoin.bitcoin_testnet.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.Map;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import com.bitcoin.bitcoin_testnet.model.User;
+import com.bitcoin.bitcoin_testnet.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +19,9 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Map<String, String> register(String username, String password) {
+        // Check if username is already taken
         if (userRepository.findByUsername(username).isPresent()) {
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("Username already taken");
         }
         User user = new User();
         user.setUsername(username);
@@ -30,33 +33,26 @@ public class AuthService {
     }
 
     public Map<String, String> login(String username, String password) {
+        // Vague error — never reveal if username exists or password is wrong
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new RuntimeException("Invalid credentials");
         }
         String token = jwtService.generateToken(username);
         return Map.of("token", token);
     }
+
     public void changePassword(String userId, String currentPassword, String newPassword) {
-        // 1. Vérifier que l'utilisateur existe
         User user = userRepository.findByUsername(userId)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-
-        // 2. Vérifier l'ancien mot de passe
+                .orElseThrow(() -> new RuntimeException("User not found"));
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new RuntimeException("Mot de passe actuel incorrect");
+            throw new RuntimeException("Invalid current password");
         }
-
-        // 3. Vérifier la longueur du nouveau mot de passe
-        if (newPassword == null || newPassword.length() < 6) {
-            throw new RuntimeException("Le mot de passe doit avoir au moins 6 caractères");
+        if (newPassword == null || newPassword.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters");
         }
-
-        // 4. Changer le mot de passe
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-
-        System.out.println("✅ Mot de passe changé pour : " + userId);
     }
 }
