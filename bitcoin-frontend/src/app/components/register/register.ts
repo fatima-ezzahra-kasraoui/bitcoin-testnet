@@ -117,11 +117,25 @@ export class RegisterComponent {
 
     this.bitcoinService.register(this.username, this.password).subscribe({
       next: (res) => {
-        this.isLoading = false;
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('userId', this.username);
-        this.router.navigate(['/dashboard']);
-      },
+  this.isLoading = false;
+  localStorage.setItem('userId', this.username);
+
+  // Store the real token
+  localStorage.setItem('token', res.token);
+
+  // If QR code returned — store MFA data and redirect to setup screen
+  if (res.qrCodeUrl) {
+    localStorage.setItem('mfaQrCodeUrl', res.qrCodeUrl);
+    localStorage.setItem('mfaSecret', res.secret);
+    // Store pre-auth token for the verify step
+    // We use the regular token here since user just registered
+    // and needs to confirm MFA setup
+    localStorage.setItem('preAuthToken', res.token);
+    this.router.navigate(['/mfa-setup']);
+  } else {
+    this.router.navigate(['/dashboard']);
+  }
+},
       error: (err) => {
         this.isLoading = false;
         // Show real backend message on register — safe to do here

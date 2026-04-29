@@ -1,21 +1,23 @@
 package com.bitcoin.bitcoin_testnet.service;
 
-import com.bitcoin.bitcoin_testnet.dto.MfaSetupResponse;
-import com.bitcoin.bitcoin_testnet.model.User;
-import com.bitcoin.bitcoin_testnet.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.binary.Base32;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.commons.codec.binary.Base32;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.bitcoin.bitcoin_testnet.dto.MfaSetupResponse;
+import com.bitcoin.bitcoin_testnet.model.User;
+import com.bitcoin.bitcoin_testnet.repository.UserRepository;
 import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -46,13 +48,15 @@ public class AuthService {
         userRepository.save(user);
 
         MfaSetupResponse mfaSetup = generateTotpSecret(username);
-        String token = jwtService.generateToken(username);
+        // Issue a pre-auth token for MFA setup confirmation
+       // User must confirm QR scan before getting full access
+       String preAuthToken = jwtService.generatePreAuthToken(username);
 
-        return Map.of(
-            "token", token,
+       return Map.of(
+            "token", preAuthToken,  // pre-auth token for /mfa/verify
             "qrCodeUrl", mfaSetup.getQrCodeUrl(),
             "secret", mfaSetup.getSecret()
-        );
+);
     }
 
     public MfaSetupResponse generateTotpSecret(String username) {
