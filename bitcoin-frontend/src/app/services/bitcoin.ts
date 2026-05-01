@@ -26,6 +26,38 @@ export class BitcoinService {
     return this.http.post(`${this.apiUrl}/auth/login`, { username, password });
   }
 
+  checkUsername(username: string): Observable<any> {
+  return this.http.get(`${this.apiUrl}/auth/check-username?username=${username}`);
+  }
+
+  // MFA endpoints
+verifyMfa(code: string, preAuthToken: string): Observable<any> {
+  // Note: we pass the preAuthToken explicitly here
+  // NOT the regular token from localStorage
+  const headers = new HttpHeaders({
+    'Authorization': `Bearer ${preAuthToken}`
+  });
+  return this.http.post(`${this.apiUrl}/auth/mfa/verify`, { code }, { headers });
+}
+
+enableMfa(password: string): Observable<any> {
+  return this.http.post(`${this.apiUrl}/auth/mfa/enable`, { password }, {
+    headers: this.getHeaders()
+  });
+}
+
+disableMfa(password: string): Observable<any> {
+  return this.http.post(`${this.apiUrl}/auth/mfa/disable`, { password }, {
+    headers: this.getHeaders()
+  });
+}
+
+getMfaStatus(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/auth/mfa/status`, {
+    headers: this.getHeaders()
+  });
+}
+
   // Status (public)
   getStatus(): Observable<any> {
     return this.http.get(`${this.apiUrl}/status`);
