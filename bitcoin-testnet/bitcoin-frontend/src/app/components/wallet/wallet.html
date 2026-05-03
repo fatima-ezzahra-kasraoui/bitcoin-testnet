@@ -1,0 +1,153 @@
+<div class="wallet-container">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="btc-icon">₿</div>
+      <span class="brand">Transactions & Signatures</span>
+    </div>
+    <button class="btn-back" (click)="goBack()">Retour</button>
+  </div>
+
+  <div class="main-content">
+    <div class="grid-2">
+
+      <div class="panel">
+        <div class="panel-title">Envoyer une transaction</div>
+        <div class="form-group">
+          <label>Adresse source</label>
+          <div class="address-row">
+            <input type="text" [(ngModel)]="fromAddress" placeholder="Adresse source" />
+            <button class="qr-btn" *ngIf="fromAddress" (click)="generateQrCode(fromAddress)" title="Show QR Code">▣ QR</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Adresse destination</label>
+          <input
+            type="text"
+            [(ngModel)]="toAddress"
+            (input)="filterContacts()"
+            (focus)="showSuggestions = true"
+            placeholder="Tapez une adresse ou sélectionnez un contact..."
+            class="form-input" />
+
+          <div class="suggestions-dropdown" *ngIf="showSuggestions && filteredContacts.length > 0">
+            <div
+              *ngFor="let contact of filteredContacts"
+              class="suggestion-item"
+              (click)="selectContact(contact)">
+              <div class="suggestion-avatar">👤</div>
+              <div class="suggestion-info">
+                <span class="suggestion-label">{{ contact.label }}</span>
+                <span class="suggestion-address">{{ contact.address }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Montant (satoshis)</label>
+          <input type="number" [(ngModel)]="amount" placeholder="0" />
+        </div>
+        <button class="btn-primary" (click)="sendTransaction()">Envoyer</button>
+
+        <div *ngIf="txResult" class="result-box">
+          <div class="result-row">
+            <span class="result-label">Status</span>
+            <span class="status-badge">{{ txResult.status }}</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Montant</span>
+            <span class="result-value">{{ txResult.amount }} satoshis</span>
+          </div>
+        </div>
+
+        <p *ngIf="message" class="success-msg">{{ message }}</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Signer un message</div>
+        <div class="form-group">
+          <label>Adresse</label>
+          <div class="address-row">
+            <input type="text" [(ngModel)]="fromAddress" placeholder="Adresse du wallet" />
+            <button class="qr-btn" *ngIf="fromAddress" (click)="generateQrCode(fromAddress)" title="Show QR Code">▣ QR</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <input type="text" [(ngModel)]="messageText" placeholder="Message à signer" />
+        </div>
+        <button class="btn-primary" (click)="signMessage()">Signer</button>
+
+        <div *ngIf="signature" class="result-box">
+          <div class="result-label">Signature</div>
+          <div class="signature-value">{{ signature }}</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="modal-overlay" *ngIf="showQrModal" (click)="closeQrModal()">
+  <div class="qr-modal" (click)="$event.stopPropagation()">
+    <h3>Wallet Address</h3>
+    <img [src]="qrCodeDataUrl" alt="QR Code" class="qr-image" />
+    <p class="qr-address">{{ selectedWalletAddress }}</p>
+    <p class="qr-hint">Scan to receive Bitcoin TestNet</p>
+    <div *ngIf="copiedToast" class="copied-toast">✓ Copied!</div>
+    <div class="qr-actions">
+      <button class="btn-copy" (click)="copyAddress(selectedWalletAddress)">Copy Address</button>
+      <button class="btn-download" (click)="downloadQr()">Download QR</button>
+      <button class="btn-close" (click)="closeQrModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- High-Risk Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showConfirmationModal" (click)="$event.stopPropagation()">
+  <div class="modal-card">
+
+    <div class="modal-header">
+      <span class="modal-warning-icon">⚠️</span>
+      <span class="modal-title">High Risk Transaction Detected</span>
+    </div>
+
+    <div class="modal-body">
+      <div class="risk-score-row">
+        <span class="risk-label">Risk Score</span>
+        <span class="risk-badge" [class]="'risk-' + getRiskLevel(pendingTxData?.riskScore)">
+          {{ pendingTxData?.riskScore }} — {{ getRiskLabel(pendingTxData?.riskScore) }}
+        </span>
+      </div>
+
+      <div class="rules-section" *ngIf="pendingTxData?.triggeredRules?.length">
+        <span class="rules-label">Règles déclenchées</span>
+        <div class="rules-chips">
+          <span *ngFor="let rule of pendingTxData.triggeredRules" class="rule-chip">{{ rule }}</span>
+        </div>
+      </div>
+
+      <div class="tx-details">
+        <div class="tx-detail-row">
+          <span class="tx-detail-label">Destination</span>
+          <span class="tx-detail-value mono">{{ pendingTxData?.toAddress }}</span>
+        </div>
+        <div class="tx-detail-row">
+          <span class="tx-detail-label">Montant</span>
+          <span class="tx-detail-value">{{ pendingTxData?.amount }} satoshis</span>
+        </div>
+      </div>
+
+      <div class="countdown-row">
+        <span class="countdown-label">Expire dans</span>
+        <span class="countdown-timer" [class.countdown-urgent]="isCountdownUrgent">{{ countdown }}</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" (click)="cancelTx()">Annuler la transaction</button>
+      <button class="btn-modal-confirm" (click)="confirmTx()">Je confirme, envoyer quand même</button>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,79 @@
+<div class="login-container">
+  <div class="login-card">
+
+    <!-- STEP 1: Identifiants -->
+    <div *ngIf="step === 'credentials'">
+      <div class="login-header">
+        <div class="btc-logo">₿</div>
+        <h1>Bitcoin TestNet</h1>
+        <p>Connectez-vous à votre compte</p>
+      </div>
+
+      <div class="form-group">
+        <label>Nom d'utilisateur</label>
+        <input
+          type="text"
+          [(ngModel)]="username"
+          placeholder="Entrez votre nom"
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input
+          type="password"
+          [(ngModel)]="password"
+          placeholder="••••••••"
+          [disabled]="isLoading"
+          (keyup.enter)="login()"
+        />
+      </div>
+
+      <button class="btn-primary" (click)="login()" [disabled]="isLoading">
+        {{ isLoading ? 'Connexion...' : 'Se connecter' }}
+      </button>
+
+      <button class="btn-secondary" (click)="goToRegister()" [disabled]="isLoading">
+        Pas de compte ? S'inscrire
+      </button>
+    </div>
+
+    <!-- STEP 2: Code TOTP -->
+    <div *ngIf="step === 'totp'">
+      <div class="login-header">
+        <div class="btc-logo">🔐</div>
+        <h1>Authentification à deux facteurs</h1>
+        <p>Entrez le code à 6 chiffres de Google Authenticator</p>
+      </div>
+
+      <div class="totp-info">
+        <p>Connexion en tant que <strong>{{ username }}</strong></p>
+      </div>
+
+      <div class="form-group">
+        <label>Code d'authentification</label>
+        <input
+          type="text"
+          [(ngModel)]="totpCode"
+          placeholder="000000"
+          maxlength="6"
+          [disabled]="isLoading"
+          (keyup.enter)="verifyTotp()"
+          autofocus
+        />
+      </div>
+
+      <button class="btn-primary" (click)="verifyTotp()" [disabled]="isLoading">
+        {{ isLoading ? 'Vérification...' : 'Vérifier' }}
+      </button>
+
+      <button class="btn-back" (click)="backToCredentials()" [disabled]="isLoading">
+        ← Retour à la connexion
+      </button>
+    </div>
+
+    <p class="error-msg" *ngIf="message">{{ message }}</p>
+
+  </div>
+</div>

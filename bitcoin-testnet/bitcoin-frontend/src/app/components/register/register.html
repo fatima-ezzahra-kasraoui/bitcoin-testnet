@@ -1,0 +1,80 @@
+<div class="register-container">
+  <div class="register-card">
+
+    <div class="register-header">
+      <div class="btc-logo">₿</div>
+      <h1>Bitcoin TestNet</h1>
+      <p>Créer votre compte</p>
+    </div>
+
+    <div class="form-group">
+      <label>Nom d'utilisateur</label>
+      <input
+        type="text"
+        [(ngModel)]="username"
+        placeholder="Choisissez un nom d'utilisateur"
+        [disabled]="isLoading"
+        (blur)="checkUsername()"
+      />
+      <span class="username-check checking" *ngIf="checkingUsername">Vérification...</span>
+      <span class="username-check available" *ngIf="usernameAvailable === true">✓ Nom disponible</span>
+      <span class="username-check taken" *ngIf="usernameAvailable === false">✗ Nom déjà pris</span>
+    </div>
+
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input
+        type="password"
+        [(ngModel)]="password"
+        placeholder="Au moins 8 caractères"
+        [disabled]="isLoading"
+      />
+    </div>
+
+    <div class="strength-bar" *ngIf="password.length > 0">
+      <div class="strength-label">
+        Force du mot de passe :
+        <span class="strength-text" [class]="getStrengthClass()">{{ getStrengthLabel() }}</span>
+      </div>
+      <div class="strength-track">
+        <div class="strength-fill" [class]="getStrengthClass()" [style.width]="getStrengthWidth()"></div>
+      </div>
+      <ul class="strength-hints">
+        <li [class.met]="password.length >= 8">Au moins 8 caractères</li>
+        <li [class.met]="hasUppercase()">Une majuscule (A-Z)</li>
+        <li [class.met]="hasNumber()">Un chiffre (0-9)</li>
+        <li [class.met]="hasSpecial()">Un caractère spécial (!@#$...)</li>
+      </ul>
+    </div>
+
+    <div class="form-group">
+      <label>Confirmer le mot de passe</label>
+      <input
+        type="password"
+        [(ngModel)]="confirmPassword"
+        placeholder="Répétez votre mot de passe"
+        [disabled]="isLoading"
+        (keyup.enter)="register()"
+      />
+      <span class="username-check available"
+        *ngIf="confirmPassword.length > 0 && password === confirmPassword">
+        ✓ Mots de passe identiques
+      </span>
+      <span class="username-check taken"
+        *ngIf="confirmPassword.length > 0 && password !== confirmPassword">
+        ✗ Mots de passe différents
+      </span>
+    </div>
+
+    <button class="btn-primary" (click)="register()" [disabled]="isLoading">
+      {{ isLoading ? 'Création...' : 'Créer le compte' }}
+    </button>
+
+    <button class="btn-secondary" (click)="goToLogin()" [disabled]="isLoading">
+      Déjà un compte ? Se connecter
+    </button>
+
+    <p class="error-msg" *ngIf="message">{{ message }}</p>
+
+  </div>
+</div>

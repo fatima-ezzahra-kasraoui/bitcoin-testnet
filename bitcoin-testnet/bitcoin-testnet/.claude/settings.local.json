@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw dependency:resolve -q)",
+      "Bash(java -version)",
+      "Bash(javac -version)",
+      "Bash(./mvnw dependency:tree -Dincludes=org.projectlombok)",
+      "Bash(xargs grep *)",
+      "Bash(./mvnw compile *)",
+      "Bash(pkill -f \"spring-boot:run\")",
+      "Bash(./mvnw spring-boot:run)"
+    ]
+  }
+}

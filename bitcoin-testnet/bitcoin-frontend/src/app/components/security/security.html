@@ -1,0 +1,161 @@
+<div class="security-container">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="btc-icon">₿</div>
+      <div>
+        <span class="brand">Bitcoin TestNet</span>
+        <span class="network-badge">TESTNET</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-back" (click)="goBack()">← Dashboard</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>🛡️ Security Insights</h1>
+        <p class="page-subtitle">Anomaly detection · last 30 days</p>
+      </div>
+      <button class="btn-export-pdf"
+              (click)="generatePdfReport()"
+              [disabled]="isGeneratingPdf"
+              *ngIf="insights && insights.flaggedTransactions > 0">
+        <span *ngIf="!isGeneratingPdf">⬇ Export PDF Report</span>
+        <span *ngIf="isGeneratingPdf">Generating…</span>
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Analyzing your transactions…</p>
+    </div>
+
+    <ng-container *ngIf="!loading && insights">
+
+      <!-- All clear -->
+      <div *ngIf="insights.flaggedTransactions === 0" class="all-clear">
+        <div class="all-clear-icon">✅</div>
+        <h2>All Clear</h2>
+        <p>No suspicious transactions detected in the last 30 days.</p>
+        <p class="all-clear-sub">
+          {{ insights.totalTransactions }} transaction{{ insights.totalTransactions !== 1 ? 's' : '' }} analyzed
+        </p>
+      </div>
+
+      <ng-container *ngIf="insights.flaggedTransactions > 0">
+
+        <!-- Section 1 — Risk score ring -->
+        <div class="section ring-section">
+          <div class="ring-wrapper">
+            <svg viewBox="0 0 120 120" class="ring-svg">
+              <circle cx="60" cy="60" r="54" fill="none" stroke="#1f1f1f" stroke-width="12"/>
+              <circle cx="60" cy="60" r="54" fill="none"
+                      [attr.stroke]="ringColor"
+                      stroke-width="12"
+                      [attr.stroke-dasharray]="ringDash"
+                      stroke-linecap="round"
+                      transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="ring-overlay">
+              <span class="ring-score" [style.color]="ringColor">{{ insights.riskScore }}</span>
+            </div>
+          </div>
+          <div class="ring-label" [style.color]="ringColor">{{ scoreLabel }}</div>
+          <div class="ring-subtitle">Based on your last 30 days</div>
+        </div>
+
+        <!-- Section 2 — Stat cards -->
+        <div class="section stats-section">
+          <div class="stat-card">
+            <div class="stat-value">{{ insights.totalTransactions }}</div>
+            <div class="stat-label">Total Transactions</div>
+          </div>
+          <div class="stat-card stat-card-alert">
+            <div class="stat-value alert-value">{{ insights.flaggedTransactions }}</div>
+            <div class="stat-label">
+              Flagged
+              <span class="stat-pct" *ngIf="insights.totalTransactions > 0">
+                ({{ getFlaggedPercent() }}%)
+              </span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label chip-label">Most Triggered</div>
+            <span class="rule-chip" *ngIf="insights.mostFrequentRule">{{ insights.mostFrequentRule }}</span>
+            <span class="stat-value" *ngIf="!insights.mostFrequentRule">—</span>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value date-value">
+              {{ insights.lastAlertDate ? (insights.lastAlertDate | date:'dd MMM') : 'None' }}
+            </div>
+            <div class="stat-label">Last Alert</div>
+          </div>
+        </div>
+
+        <!-- Section 3 — Charts -->
+        <div class="section charts-section">
+          <div class="chart-panel">
+            <div class="chart-title">Alerts last 7 days</div>
+            <canvas #alertsChart></canvas>
+          </div>
+          <div class="chart-panel">
+            <div class="chart-title">Rules triggered</div>
+            <canvas #rulesChart></canvas>
+          </div>
+        </div>
+
+        <!-- Section 4 — Table + Tips -->
+        <div class="section bottom-section">
+
+          <div class="bottom-panel">
+            <div class="panel-title">Top Risky Transactions</div>
+            <div *ngIf="insights.topRiskyTransactions.length === 0" class="empty-panel">No data</div>
+            <table *ngIf="insights.topRiskyTransactions.length > 0" class="tx-table">
+              <thead>
+                <tr>
+                  <th>TxId</th>
+                  <th>Risk</th>
+                  <th>Rules</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let t of insights.topRiskyTransactions">
+                  <td class="tx-id-cell">{{ t.txId?.slice(0, 8) }}…</td>
+                  <td>
+                    <span class="risk-badge"
+                          [class.risk-high]="t.riskScore >= 75"
+                          [class.risk-med]="t.riskScore >= 50 && t.riskScore < 75"
+                          [class.risk-low]="t.riskScore < 50">
+                      {{ t.riskScore }}
+                    </span>
+                  </td>
+                  <td class="rules-cell">
+                    <span *ngFor="let r of t.triggeredRules" class="rule-chip-sm">{{ r }}</span>
+                  </td>
+                  <td class="tx-date-cell">{{ t.date | date:'dd/MM HH:mm' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="bottom-panel tips-panel">
+            <div class="panel-title">Security Tips</div>
+            <div *ngIf="insights.securityTips.length === 0" class="empty-panel">No tips</div>
+            <div *ngFor="let tip of insights.securityTips" class="tip-card">
+              <span class="tip-icon">⚠️</span>
+              <span class="tip-text">{{ tip }}</span>
+            </div>
+          </div>
+
+        </div>
+
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

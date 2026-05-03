@@ -1,0 +1,28 @@
+# Maven build output
+bitcoin-testnet/bitcoin-testnet/target/
+
+# Node.js dependencies
+bitcoin-testnet/bitcoin-frontend/node_modules/
+node_modules/
+
+# Angular build output
+bitcoin-testnet/bitcoin-frontend/dist/
+
+# Bitcoin wallet/chain data
+*.spvchain
+*.wallet
+
+# IDE and OS files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.local

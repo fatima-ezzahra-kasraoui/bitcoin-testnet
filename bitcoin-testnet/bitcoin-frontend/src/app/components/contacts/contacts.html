@@ -1,0 +1,59 @@
+<div class="contacts-container">
+  <button class="btn-back" (click)="goBack()">
+    ← Retour au Dashboard
+  </button>
+  <div class="contacts-header">
+    <div class="header-left">
+      <div class="btc-icon">📒</div>
+      <h2>Carnet d'adresses</h2>
+    </div>
+    <p class="header-subtitle">Gérez vos contacts Bitcoin</p>
+  </div>
+
+  <!-- Formulaire d'ajout -->
+  <div class="add-contact-card">
+    <div class="add-contact-title">➕ Nouveau contact</div>
+    <div class="add-contact-form">
+      <input
+        type="text"
+        [(ngModel)]="newLabel"
+        placeholder="Label (ex: Alice)"
+        class="form-input" />
+      <input
+        type="text"
+        [(ngModel)]="newAddress"
+        placeholder="Adresse Bitcoin (ex: tb1... ou m...)"
+        class="form-input" />
+      <button (click)="addContact()" class="btn-add">Ajouter</button>
+    </div>
+  </div>
+
+  <!-- Message de confirmation/erreur -->
+  <div *ngIf="message" class="toast-message" [class.toast-error]="message.includes('Erreur')">
+    {{ message }}
+  </div>
+
+  <!-- Liste des contacts -->
+  <div class="contacts-list">
+    <div *ngFor="let contact of contacts" class="contact-card">
+      <div class="contact-avatar">
+        <span class="avatar-icon">👤</span>
+      </div>
+      <div class="contact-info">
+        <span class="contact-label">{{ contact.label }}</span>
+        <span class="contact-address">{{ contact.address }}</span>
+        <span class="contact-date">Ajouté le {{ contact.createdAt | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <button class="btn-delete" (click)="deleteContact(contact.id)" title="Supprimer">
+        🗑️
+      </button>
+    </div>
+  </div>
+
+  <!-- État vide -->
+  <div *ngIf="contacts.length === 0" class="empty-state">
+    <div class="empty-icon">📒</div>
+    <p>Aucun contact pour le moment</p>
+    <p class="empty-hint">Ajoutez vos premières adresses Bitcoin ci-dessus</p>
+  </div>
+</div>

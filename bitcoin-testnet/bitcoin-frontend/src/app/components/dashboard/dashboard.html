@@ -1,0 +1,179 @@
+<div class="dashboard-container">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="btc-icon">₿</div>
+      <div>
+        <span class="brand">Bitcoin TestNet</span>
+        <span class="network-badge">TESTNET</span>
+        <span class="status-badge" [class.connected]="isConnected" [class.disconnected]="!isConnected">
+          {{ isConnected ? '🟢 Connected (' + peerCount + ' peers)' : '🔴 Disconnected' }}
+        </span>
+      </div>
+    </div>
+    <div class="topbar-right">
+
+      <!-- Pending confirmation badge -->
+      <div class="pending-review-btn" *ngIf="pendingConfirmationCount > 0" (click)="goToPendingReview()">
+        <span class="pending-review-icon">⚠️</span>
+        <span class="pending-review-label">Pending Review</span>
+        <span class="pending-review-badge">{{ pendingConfirmationCount }}</span>
+      </div>
+
+      <!-- Notification bell -->
+      <div class="notif-bell" (click)="toggleNotifDropdown($event)">
+        <span class="notif-icon">🔔</span>
+        <span class="notif-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+        <div class="notif-dropdown" *ngIf="notifDropdownOpen" (click)="$event.stopPropagation()">
+          <div class="notif-dropdown-header">Notifications</div>
+          <div *ngIf="notifications.length === 0" class="notif-empty">Aucune notification</div>
+          <div *ngFor="let notif of notifications" class="notif-item" (click)="markAsRead(notif)">
+            <div class="notif-msg">{{ notif.message }}</div>
+            <div class="notif-time">{{ notif.createdAt | date:'dd/MM HH:mm' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <span class="user-label">{{ userId }}</span>
+      <button class="btn-contacts" (click)="goToContacts()">
+        📒 Contacts
+      </button>
+      <button class="btn-security" (click)="goToSecurity()">
+        🛡️ Security
+      </button>
+      <button class="btn-profile" (click)="goToProfile()">
+        👤 Mon Profil
+      </button>
+      <button class="btn-logout" (click)="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="section-header">
+      <h2>Mes Wallets</h2>
+      <button class="btn-create" (click)="createWallet()">+ Nouveau wallet</button>
+    </div>
+
+    <div *ngIf="wallets.length === 0" class="empty-state">
+      <p>Aucun wallet créé pour l'instant.</p>
+    </div>
+
+    <div class="wallet-list">
+      <div *ngFor="let wallet of wallets" class="wallet-card-wrapper" [id]="'wallet-' + wallet.address">
+
+        <div class="wallet-card">
+          <div class="wallet-card-left">
+            <div class="wallet-icon">₿</div>
+            <div class="wallet-info">
+              <span *ngIf="editingWallet !== wallet.address" class="wallet-label" (click)="startEdit(wallet)">
+                {{ wallet.label }}
+              </span>
+              <input *ngIf="editingWallet === wallet.address"
+                     type="text"
+                     [(ngModel)]="editLabelValue"
+                     (blur)="saveLabel(wallet)"
+                     (keyup.enter)="saveLabel(wallet)"
+                     (keyup.escape)="cancelEdit()"
+                     class="edit-label-input" />
+              <span class="wallet-address">{{ wallet.address }}</span>
+              <span class="wallet-balance">{{ balances[wallet.address] || '...' }}</span>
+              <span class="wallet-date">Créé le {{ wallet.createdAt | date:'dd MMM yyyy' }}</span>
+            </div>
+          </div>
+          <div class="wallet-actions">
+            <button class="btn-detail" (click)="toggleTransactions(wallet.address)">
+              {{ selectedWallet === wallet.address ? 'Masquer' : 'Transactions' }}
+            </button>
+            <button class="btn-faucet" (click)="openFaucet(wallet.address)">
+              🌐 Obtenir des BTC
+            </button>
+            <button class="btn-detail" (click)="goToWallet(wallet.address)">Envoyer</button>
+            <button class="btn-delete" (click)="confirmDelete(wallet)">
+              🗑️ Supprimer
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="selectedWallet === wallet.address" class="transactions-panel">
+
+          <!-- Header row: title + export button -->
+          <div class="tx-header-row">
+            <span class="tx-header">Historique des transactions</span>
+            <button class="btn-export" (click)="exportCsv(wallet.address)">📥 Export CSV</button>
+          </div>
+
+          <!-- Filter bar -->
+          <div class="tx-filter-bar">
+            <select class="filter-select" [(ngModel)]="txFilter.status" (change)="applyFilters(wallet.address)">
+              <option value="">Tous les statuts</option>
+              <option value="PENDING">En attente</option>
+              <option value="CONFIRMED">Confirmées</option>
+              <option value="FAILED">Échouées</option>
+              <option value="AWAITING_CONFIRMATION">En attente de confirmation</option>
+            </select>
+            <input class="filter-date" type="date" [(ngModel)]="txFilter.from"
+                   (change)="applyFilters(wallet.address)" placeholder="Du" />
+            <input class="filter-date" type="date" [(ngModel)]="txFilter.to"
+                   (change)="applyFilters(wallet.address)" placeholder="Au" />
+            <select class="filter-select" [(ngModel)]="txFilter.sort" (change)="applyFilters(wallet.address)">
+              <option value="date">Plus récentes</option>
+              <option value="date-asc">Plus anciennes</option>
+              <option value="amount">Montant ↓</option>
+            </select>
+          </div>
+
+          <div *ngIf="!transactions[wallet.address] || transactions[wallet.address].length === 0" class="tx-empty">
+            Aucune transaction pour ce wallet.
+          </div>
+
+          <div *ngFor="let tx of transactions[wallet.address]" class="tx-item">
+            <div class="tx-row">
+              <div class="tx-info">
+                <span class="tx-type" [class.tx-received]="tx.toAddress === wallet.address"
+                      [class.tx-sent]="tx.fromAddress === wallet.address">
+                  {{ tx.toAddress === wallet.address ? 'Reçu' : 'Envoyé' }}
+                </span>
+                <span class="tx-address">
+                  {{ tx.toAddress === wallet.address ? 'De : ' + tx.fromAddress : 'Vers : ' + tx.toAddress }}
+                </span>
+              </div>
+              <div class="tx-right">
+                <span class="tx-amount" [class.tx-amount-received]="tx.toAddress === wallet.address">
+                  {{ tx.toAddress === wallet.address ? '+' : '-' }}{{ tx.amount }} sat
+                </span>
+                <span class="tx-status" [class.confirmed]="tx.status === 'CONFIRMED'"
+                      [class.pending]="tx.status === 'PENDING'"
+                      [class.failed]="tx.status === 'FAILED'"
+                      [class.awaiting]="tx.status === 'AWAITING_CONFIRMATION'">
+
+                  <ng-container *ngIf="tx.status === 'PENDING'">
+                    En attente ⏳ ({{ tx.confirmations }}/3)
+                  </ng-container>
+
+                  <ng-container *ngIf="tx.status === 'CONFIRMED'">
+                    Confirmée ✅ ({{ tx.confirmations }} confirmation{{ tx.confirmations > 1 ? 's' : '' }})
+                  </ng-container>
+
+                  <ng-container *ngIf="tx.status === 'FAILED'">
+                    Échouée ❌
+                  </ng-container>
+
+                  <ng-container *ngIf="tx.status === 'AWAITING_CONFIRMATION'">
+                    ⚠️ En attente de confirmation (risque {{ tx.riskScore }})
+                  </ng-container>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-action" (click)="goToWallet(wallets[0]?.address)">Envoyer une transaction</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div *ngIf="toastVisible" class="copy-toast">{{ toastMessage }}</div>
+</div>
