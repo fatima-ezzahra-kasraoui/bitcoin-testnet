@@ -1,80 +1,141 @@
-<div class="register-container">
-  <div class="register-card">
+<div style="min-height:100vh;display:flex;background:radial-gradient(ellipse 80% 60% at 50% -10%, hsl(43 90% 50% / 0.12), transparent 60%), hsl(0 0% 4%);position:relative;overflow:hidden;">
 
-    <div class="register-header">
-      <div class="btc-logo">₿</div>
-      <h1>Bitcoin TestNet</h1>
-      <p>Créer votre compte</p>
-    </div>
+  <div style="position:absolute;inset:0;pointer-events:none;opacity:0.03;background-image:url(data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E);"></div>
 
-    <div class="form-group">
-      <label>Nom d'utilisateur</label>
-      <input
-        type="text"
-        [(ngModel)]="username"
-        placeholder="Choisissez un nom d'utilisateur"
-        [disabled]="isLoading"
-        (blur)="checkUsername()"
-      />
-      <span class="username-check checking" *ngIf="checkingUsername">Vérification...</span>
-      <span class="username-check available" *ngIf="usernameAvailable === true">✓ Nom disponible</span>
-      <span class="username-check taken" *ngIf="usernameAvailable === false">✗ Nom déjà pris</span>
-    </div>
+  <!-- LEFT PANEL -->
+  <div class="cascade-1"
+       style="width:40%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 48px;border-right:1px solid hsl(43 30% 16%);position:relative;overflow:hidden;">
 
-    <div class="form-group">
-      <label>Mot de passe</label>
-      <input
-        type="password"
-        [(ngModel)]="password"
-        placeholder="Au moins 8 caractères"
-        [disabled]="isLoading"
-      />
-    </div>
+    <canvas #particlesCanvas style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;"></canvas>
+    <div style="position:absolute;top:-100px;left:-100px;width:400px;height:400px;border-radius:50%;background:var(--gradient-radial-gold);pointer-events:none;"></div>
 
-    <div class="strength-bar" *ngIf="password.length > 0">
-      <div class="strength-label">
-        Force du mot de passe :
-        <span class="strength-text" [class]="getStrengthClass()">{{ getStrengthLabel() }}</span>
+    <div style="position:relative;z-index:1;text-align:center;width:100%;max-width:300px;">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--gradient-gold);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:hsl(0 0% 5%);margin:0 auto 24px;box-shadow:var(--shadow-gold-lg);animation:pulse-gold 2.5s ease-in-out infinite;">
+        &#x20BF;
       </div>
-      <div class="strength-track">
-        <div class="strength-fill" [class]="getStrengthClass()" [style.width]="getStrengthWidth()"></div>
+
+      <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:0.2em;background:var(--gradient-text-gold);-webkit-background-clip:text;background-clip:text;color:transparent;text-transform:uppercase;margin-bottom:4px;">
+        Aurum Vault
       </div>
-      <ul class="strength-hints">
-        <li [class.met]="password.length >= 8">Au moins 8 caractères</li>
-        <li [class.met]="hasUppercase()">Une majuscule (A-Z)</li>
-        <li [class.met]="hasNumber()">Un chiffre (0-9)</li>
-        <li [class.met]="hasSpecial()">Un caractère spécial (!@#$...)</li>
-      </ul>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:hsl(var(--muted-foreground));letter-spacing:0.15em;text-transform:uppercase;margin-bottom:40px;">
+        Bitcoin TestNet · Sovereign
+      </div>
+
+      <div style="width:100%;">
+        <div style="padding:12px 0 12px 16px;border-bottom:1px solid hsl(var(--border) / 0.5);border-left:2px solid hsl(43 74% 52% / 0.3);margin-bottom:4px;font-size:13px;color:hsl(var(--muted-foreground));text-align:left;">Multi-wallet AES-256 vault</div>
+        <div style="padding:12px 0 12px 16px;border-bottom:1px solid hsl(var(--border) / 0.5);border-left:2px solid hsl(43 74% 52% / 0.3);margin-bottom:4px;font-size:13px;color:hsl(var(--muted-foreground));text-align:left;">Real-time Kafka transaction stream</div>
+        <div style="padding:12px 0 12px 16px;border-bottom:1px solid hsl(var(--border) / 0.5);border-left:2px solid hsl(43 74% 52% / 0.3);margin-bottom:4px;font-size:13px;color:hsl(var(--muted-foreground));text-align:left;">ECDSA message signing &amp; verification</div>
+        <div style="padding:12px 0 12px 16px;border-bottom:1px solid hsl(var(--border) / 0.5);border-left:2px solid hsl(43 74% 52% / 0.3);margin-bottom:4px;font-size:13px;color:hsl(var(--muted-foreground));text-align:left;">Behavioral anomaly detection engine</div>
+        <div style="padding:12px 0 12px 16px;border-bottom:1px solid hsl(var(--border) / 0.5);border-left:2px solid hsl(43 74% 52% / 0.3);margin-bottom:4px;font-size:13px;color:hsl(var(--muted-foreground));text-align:left;">Google Authenticator MFA</div>
+      </div>
+
+      <div style="margin-top:36px;display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border:1px solid hsl(142 70% 45% / 0.3);border-radius:99px;background:hsl(142 70% 45% / 0.08);">
+        <div style="width:7px;height:7px;border-radius:50%;background:hsl(var(--success));animation:pulse-success 2s ease-in-out infinite;"></div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:hsl(var(--success));text-transform:uppercase;">TestNet3 · Live Network</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="cascade-2"
+       style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 60px;overflow-y:auto;">
+
+    <h1 class="display" style="font-size:32px;font-weight:700;background:var(--gradient-text-gold);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px;">
+      Create Account
+    </h1>
+    <p style="font-size:14px;color:hsl(var(--muted-foreground));margin-bottom:32px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em;">
+      Join the Aurum Vault · Bitcoin TestNet3
+    </p>
+
+    <div style="display:flex;border-bottom:1px solid hsl(var(--border));margin-bottom:32px;">
+      <button (click)="goToLogin()" style="padding:12px 24px;font-size:13px;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:hsl(var(--muted-foreground));background:transparent;border:none;cursor:pointer;transition:color 0.2s;">
+        Sign In
+      </button>
+      <button style="padding:12px 24px;font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:hsl(43 74% 52%);border-bottom:2px solid hsl(43 74% 52%);background:transparent;border-top:none;border-left:none;border-right:none;cursor:pointer;margin-bottom:-1px;">
+        Create Account
+      </button>
     </div>
 
-    <div class="form-group">
-      <label>Confirmer le mot de passe</label>
-      <input
-        type="password"
-        [(ngModel)]="confirmPassword"
-        placeholder="Répétez votre mot de passe"
-        [disabled]="isLoading"
-        (keyup.enter)="register()"
-      />
-      <span class="username-check available"
-        *ngIf="confirmPassword.length > 0 && password === confirmPassword">
-        ✓ Mots de passe identiques
-      </span>
-      <span class="username-check taken"
-        *ngIf="confirmPassword.length > 0 && password !== confirmPassword">
-        ✗ Mots de passe différents
-      </span>
+    <!-- Username -->
+    <div style="margin-bottom:20px;">
+      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:hsl(var(--muted-foreground));margin-bottom:8px;">Username</label>
+      <input type="text" class="input-field"
+             [(ngModel)]="username"
+             placeholder="Choose a username"
+             [disabled]="isLoading"
+             (blur)="checkUsername()" />
+      <div *ngIf="checkingUsername" style="font-size:11px;color:hsl(var(--muted-foreground));font-family:'JetBrains Mono',monospace;margin-top:6px;">Checking...</div>
+      <div *ngIf="usernameAvailable === true" style="font-size:11px;color:hsl(var(--success));font-family:'JetBrains Mono',monospace;margin-top:6px;">&#x2713; Username available</div>
+      <div *ngIf="usernameAvailable === false" style="font-size:11px;color:hsl(var(--destructive));font-family:'JetBrains Mono',monospace;margin-top:6px;">&#x2717; Username already taken</div>
     </div>
 
-    <button class="btn-primary" (click)="register()" [disabled]="isLoading">
-      {{ isLoading ? 'Création...' : 'Créer le compte' }}
+    <!-- Password -->
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:hsl(var(--muted-foreground));margin-bottom:8px;">Password</label>
+      <input type="password" class="input-field"
+             [(ngModel)]="password"
+             placeholder="At least 8 characters"
+             [disabled]="isLoading" />
+    </div>
+
+    <!-- Strength bar -->
+    <div *ngIf="password.length > 0" style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:hsl(var(--muted-foreground));text-transform:uppercase;letter-spacing:0.1em;">Strength</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.1em;"
+              [style.color]="getStrengthClass()==='weak'?'hsl(var(--destructive))':getStrengthClass()==='fair'?'hsl(var(--warning))':getStrengthClass()==='good'?'hsl(43 74% 52%)':'hsl(var(--success))'">
+          {{ getStrengthLabel() | uppercase }}
+        </span>
+      </div>
+      <div style="height:3px;background:hsl(var(--border));border-radius:2px;overflow:hidden;">
+        <div [style.width]="getStrengthWidth()"
+             [style.background]="getStrengthClass()==='weak'?'hsl(var(--destructive))':getStrengthClass()==='fair'?'hsl(var(--warning))':getStrengthClass()==='good'?'hsl(43 74% 52%)':'hsl(var(--success))'"
+             style="height:100%;border-radius:2px;transition:width 0.3s;"></div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;"
+              [style.color]="password.length >= 8 ? 'hsl(var(--success))' : 'hsl(var(--muted-foreground))'">
+          {{ password.length >= 8 ? '&#x2713;' : '○' }} 8+ chars
+        </span>
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;"
+              [style.color]="hasUppercase() ? 'hsl(var(--success))' : 'hsl(var(--muted-foreground))'">
+          {{ hasUppercase() ? '&#x2713;' : '○' }} Uppercase
+        </span>
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;"
+              [style.color]="hasNumber() ? 'hsl(var(--success))' : 'hsl(var(--muted-foreground))'">
+          {{ hasNumber() ? '&#x2713;' : '○' }} Number
+        </span>
+        <span style="font-size:11px;font-family:'JetBrains Mono',monospace;"
+              [style.color]="hasSpecial() ? 'hsl(var(--success))' : 'hsl(var(--muted-foreground))'">
+          {{ hasSpecial() ? '&#x2713;' : '○' }} Special
+        </span>
+      </div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div style="margin-bottom:28px;">
+      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:hsl(var(--muted-foreground));margin-bottom:8px;">Confirm Password</label>
+      <input type="password" class="input-field"
+             [(ngModel)]="confirmPassword"
+             placeholder="Repeat your password"
+             [disabled]="isLoading"
+             (keyup.enter)="register()" />
+      <div *ngIf="confirmPassword.length > 0 && password === confirmPassword"
+           style="font-size:11px;color:hsl(var(--success));font-family:'JetBrains Mono',monospace;margin-top:6px;">&#x2713; Passwords match</div>
+      <div *ngIf="confirmPassword.length > 0 && password !== confirmPassword"
+           style="font-size:11px;color:hsl(var(--destructive));font-family:'JetBrains Mono',monospace;margin-top:6px;">&#x2717; Passwords do not match</div>
+    </div>
+
+    <button class="btn-gold" style="width:100%;padding:15px;font-size:15px;font-family:'Cinzel',serif;letter-spacing:0.08em;" (click)="register()" [disabled]="isLoading">
+      {{ isLoading ? 'Creating Account...' : 'Open the Vault' }}
     </button>
 
-    <button class="btn-secondary" (click)="goToLogin()" [disabled]="isLoading">
-      Déjà un compte ? Se connecter
-    </button>
+    <div *ngIf="message" style="margin-top:16px;padding:12px 16px;border:1px solid hsl(0 75% 55% / 0.3);border-radius:8px;background:hsl(0 75% 55% / 0.1);color:hsl(var(--destructive));font-size:13px;text-align:center;font-family:'JetBrains Mono',monospace;">
+      {{ message }}
+    </div>
 
-    <p class="error-msg" *ngIf="message">{{ message }}</p>
-
+    <div style="margin-top:32px;font-family:'JetBrains Mono',monospace;font-size:10px;color:hsl(var(--muted-foreground));display:flex;gap:12px;justify-content:center;letter-spacing:0.05em;text-transform:uppercase;">
+      <span>AES-256</span><span>·</span><span>MFA Setup</span><span>·</span><span>ECDSA</span>
+    </div>
   </div>
 </div>

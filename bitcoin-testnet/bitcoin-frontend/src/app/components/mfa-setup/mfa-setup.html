@@ -1,77 +1,131 @@
-<div class="mfa-setup-container">
-  <div class="mfa-card">
+<div style="min-height:100vh;background:#050507;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;font-family:'Inter',sans-serif;">
 
-    <div class="mfa-header">
-      <div class="shield-icon">🔐</div>
-      <h1>Sécurisez votre compte</h1>
-      <p>Configurez l'authentification à deux facteurs avec Google Authenticator</p>
+  <!-- Background glow -->
+  <div style="position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.08) 0%,transparent 65%);pointer-events:none;"></div>
+
+  <!-- Card -->
+  <div style="width:100%;max-width:480px;background:linear-gradient(180deg,rgba(255,255,255,0.05) 0%,rgba(255,255,255,0.02) 100%);border:0.5px solid rgba(201,168,76,0.2);border-radius:20px;padding:40px;position:relative;z-index:1;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
+
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:32px;">
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#E8C96A);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:#050507;box-shadow:0 0 20px rgba(201,168,76,0.4);">&#x20BF;</div>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:0.12em;background:linear-gradient(135deg,#E8C96A,#C9A84C);-webkit-background-clip:text;background-clip:text;color:transparent;">AURUM</div>
+      </div>
     </div>
 
-    <div *ngIf="isLoading" class="loading">
-      <p>Chargement...</p>
+    <!-- Header -->
+    <div style="margin-bottom:28px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <svg width="20" height="20" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <h1 style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:#e8e0c8;margin:0;">Secure Your Account</h1>
+      </div>
+      <p style="font-size:13px;color:rgba(255,255,255,0.35);line-height:1.6;margin:0;">Set up two-factor authentication with Google Authenticator to protect your vault.</p>
     </div>
 
-    <div *ngIf="!isLoading">
+    <!-- STATE 1: Loading -->
+    <div *ngIf="isLoading" style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:40px 0;">
+      <div style="width:40px;height:40px;border:3px solid rgba(201,168,76,0.15);border-top-color:#C9A84C;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+      <p style="color:rgba(255,255,255,0.3);font-size:13px;font-family:'JetBrains Mono',monospace;">Loading secure setup...</p>
+    </div>
 
-      <div class="setup-step">
-        <div class="step-number">1</div>
-        <div class="step-content">
-          <h3>Téléchargez Google Authenticator</h3>
-          <p>Installez l'application sur votre téléphone si ce n'est pas déjà fait.</p>
+    <!-- STATE 2: Error (no QR data) -->
+    <div *ngIf="!isLoading && !qrCodeDataUrl" style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:32px 0;text-align:center;">
+      <div style="width:56px;height:56px;border-radius:50%;background:rgba(239,68,68,0.1);border:0.5px solid rgba(239,68,68,0.25);display:flex;align-items:center;justify-content:center;">
+        <svg width="24" height="24" fill="none" stroke="#EF4444" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <p style="color:#EF4444;font-size:14px;font-family:'JetBrains Mono',monospace;line-height:1.6;">{{ message }}</p>
+      <button (click)="goBack()"
+              style="padding:10px 28px;background:rgba(201,168,76,0.1);border:0.5px solid rgba(201,168,76,0.3);border-radius:9px;color:#C9A84C;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;">
+        &#8592; Go Back
+      </button>
+    </div>
+
+    <!-- STATE 3: Main content (QR loaded) -->
+    <div *ngIf="!isLoading && qrCodeDataUrl">
+
+      <div style="display:flex;flex-direction:column;gap:20px;">
+
+        <!-- Step 1 -->
+        <div style="display:flex;gap:14px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);border:0.5px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#C9A84C;flex-shrink:0;margin-top:2px;">1</div>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:#e8e0c8;margin-bottom:4px;">Download Google Authenticator</div>
+            <p style="font-size:12px;color:rgba(255,255,255,0.35);margin:0;line-height:1.6;">Install the app on your phone if you haven't already. Available on iOS and Android.</p>
+          </div>
         </div>
-      </div>
 
-      <div class="setup-step">
-        <div class="step-number">2</div>
-        <div class="step-content">
-          <h3>Scannez ce QR Code</h3>
-          <p>Ouvrez Google Authenticator → appuyez sur + → Scanner le QR code</p>
+        <!-- Step 2 — QR Code -->
+        <div style="display:flex;gap:14px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);border:0.5px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#C9A84C;flex-shrink:0;margin-top:2px;">2</div>
+          <div style="flex:1;">
+            <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:#e8e0c8;margin-bottom:4px;">Scan this QR Code</div>
+            <p style="font-size:12px;color:rgba(255,255,255,0.35);margin:0 0 14px;line-height:1.6;">Open Google Authenticator → tap + → Scan QR code</p>
+
+            <div style="background:#ffffff;border-radius:10px;padding:14px;display:inline-flex;margin-bottom:12px;">
+              <img [src]="qrCodeDataUrl"
+                   style="width:180px;height:180px;display:block;"
+                   alt="QR Code" />
+            </div>
+
+            <div *ngIf="secretKey" style="background:rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.06);border-radius:8px;padding:10px 14px;">
+              <p style="font-size:10px;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;margin:0 0 5px;text-transform:uppercase;letter-spacing:0.1em;">Can't scan? Enter this key manually:</p>
+              <code style="font-family:'JetBrains Mono',monospace;color:#C9A84C;font-size:12px;word-break:break-all;letter-spacing:2px;">{{ secretKey }}</code>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="qr-wrapper">
-        <qrcode
-          [qrdata]="qrCodeUrl"
-          [width]="200"
-          [errorCorrectionLevel]="'M'"
-          [colorDark]="'#000000'"
-          [colorLight]="'#ffffff'">
-        </qrcode>
-      </div>
-
-      <div class="secret-box">
-        <p class="secret-label">Impossible de scanner ? Entrez cette clé manuellement :</p>
-        <code class="secret-key">{{ secretKey }}</code>
-      </div>
-
-      <div class="setup-step">
-        <div class="step-number">3</div>
-        <div class="step-content">
-          <h3>Entrez le code à 6 chiffres</h3>
-          <p>Tapez le code affiché dans Google Authenticator pour confirmer</p>
+        <!-- Step 3 — Code input -->
+        <div style="display:flex;gap:14px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(201,168,76,0.15);border:0.5px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#C9A84C;flex-shrink:0;margin-top:2px;">3</div>
+          <div style="flex:1;">
+            <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:#e8e0c8;margin-bottom:4px;">Enter the 6-Digit Code</div>
+            <p style="font-size:12px;color:rgba(255,255,255,0.35);margin:0 0 12px;line-height:1.6;">Enter the code shown in Google Authenticator to confirm setup.</p>
+            <input type="text"
+                   [(ngModel)]="confirmCode"
+                   placeholder="000000"
+                   maxlength="6"
+                   [disabled]="isVerifying"
+                   (keyup.enter)="confirmSetup()"
+                   style="width:100%;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:28px;letter-spacing:14px;text-align:center;color:#e8e0c8;outline:none;transition:all 0.2s;" />
+          </div>
         </div>
+
       </div>
 
-      <div class="form-group">
-        <input
-          type="text"
-          [(ngModel)]="confirmCode"
-          placeholder="000000"
-          maxlength="6"
+      <!-- Error / validation message -->
+      <div *ngIf="message"
+           style="margin-top:16px;padding:11px 14px;border-radius:8px;background:rgba(239,68,68,0.08);border:0.5px solid rgba(239,68,68,0.25);color:#EF4444;font-size:13px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:8px;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        {{ message }}
+      </div>
+
+      <!-- Buttons -->
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:24px;">
+        <button
+          (click)="confirmSetup()"
+          [disabled]="isVerifying || confirmCode.length !== 6"
+          style="width:100%;padding:14px;border:none;border-radius:10px;font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:0.06em;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;"
+          [style.background]="(isVerifying || confirmCode.length !== 6) ? 'rgba(201,168,76,0.3)' : 'linear-gradient(135deg,#C9A84C,#E8C96A)'"
+          [style.color]="(isVerifying || confirmCode.length !== 6) ? 'rgba(5,5,7,0.5)' : '#050507'"
+          [style.cursor]="(isVerifying || confirmCode.length !== 6) ? 'not-allowed' : 'pointer'">
+          <svg *ngIf="!isVerifying" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          {{ isVerifying ? 'Verifying...' : 'Confirm &amp; Activate 2FA' }}
+        </button>
+
+        <button
+          (click)="skipSetup()"
           [disabled]="isVerifying"
-          (keyup.enter)="confirmSetup()"
-        />
+          style="width:100%;padding:12px;background:transparent;border:0.5px solid rgba(255,255,255,0.08);border-radius:10px;color:rgba(255,255,255,0.3);font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;"
+          onmouseover="this.style.borderColor='rgba(255,255,255,0.2)';this.style.color='rgba(255,255,255,0.6)'"
+          onmouseout="this.style.borderColor='rgba(255,255,255,0.08)';this.style.color='rgba(255,255,255,0.3)'">
+          Skip — I'll set this up later
+        </button>
       </div>
 
-      <p class="error-msg" *ngIf="message">{{ message }}</p>
-
-      <button class="btn-primary" (click)="confirmSetup()" [disabled]="isVerifying">
-        {{ isVerifying ? 'Vérification...' : 'Confirmer & Activer la 2FA' }}
-      </button>
-
-      <button class="btn-skip" (click)="skipSetup()" [disabled]="isVerifying">
-        Passer — Je configurerai ça plus tard
-      </button>
+      <p style="text-align:center;font-size:11px;color:rgba(255,255,255,0.15);font-family:'JetBrains Mono',monospace;margin-top:20px;line-height:1.6;">
+        2FA protects your vault even if your password is compromised.<br/>We strongly recommend completing this setup.
+      </p>
 
     </div>
   </div>

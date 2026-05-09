@@ -1,59 +1,115 @@
-<div class="contacts-container">
-  <button class="btn-back" (click)="goBack()">
-    ← Retour au Dashboard
-  </button>
-  <div class="contacts-header">
-    <div class="header-left">
-      <div class="btc-icon">📒</div>
-      <h2>Carnet d'adresses</h2>
-    </div>
-    <p class="header-subtitle">Gérez vos contacts Bitcoin</p>
-  </div>
-
-  <!-- Formulaire d'ajout -->
-  <div class="add-contact-card">
-    <div class="add-contact-title">➕ Nouveau contact</div>
-    <div class="add-contact-form">
-      <input
-        type="text"
-        [(ngModel)]="newLabel"
-        placeholder="Label (ex: Alice)"
-        class="form-input" />
-      <input
-        type="text"
-        [(ngModel)]="newAddress"
-        placeholder="Adresse Bitcoin (ex: tb1... ou m...)"
-        class="form-input" />
-      <button (click)="addContact()" class="btn-add">Ajouter</button>
-    </div>
-  </div>
-
-  <!-- Message de confirmation/erreur -->
-  <div *ngIf="message" class="toast-message" [class.toast-error]="message.includes('Erreur')">
-    {{ message }}
-  </div>
-
-  <!-- Liste des contacts -->
-  <div class="contacts-list">
-    <div *ngFor="let contact of contacts" class="contact-card">
-      <div class="contact-avatar">
-        <span class="avatar-icon">👤</span>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="logo-mark">&#x20BF;</div>
+        <div>
+          <div class="logo-text-main">AURUM</div>
+        </div>
       </div>
-      <div class="contact-info">
-        <span class="contact-label">{{ contact.label }}</span>
-        <span class="contact-address">{{ contact.address }}</span>
-        <span class="contact-date">Ajouté le {{ contact.createdAt | date:'dd/MM/yyyy' }}</span>
-      </div>
-      <button class="btn-delete" (click)="deleteContact(contact.id)" title="Supprimer">
-        🗑️
-      </button>
     </div>
-  </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item" [class.active]="currentPage === 'dashboard'" (click)="goToDashboard()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Wallets
+      </div>
+      <div class="nav-item" [class.active]="currentPage === 'wallet'" (click)="goToWallet(null)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+        Send &amp; Sign
+      </div>
+      <div class="nav-item" [class.active]="currentPage === 'security'" (click)="goToSecurity()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Security
+      </div>
+      <div class="nav-item" [class.active]="currentPage === 'contacts'" (click)="goToContacts()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Address Book
+      </div>
+      <div class="nav-item" [class.active]="currentPage === 'profile'" (click)="goToProfile()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        Profile
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="nav-item" style="color:#EF4444;" (click)="logout()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Lock Vault
+      </div>
+    </div>
+  </aside>
 
-  <!-- État vide -->
-  <div *ngIf="contacts.length === 0" class="empty-state">
-    <div class="empty-icon">📒</div>
-    <p>Aucun contact pour le moment</p>
-    <p class="empty-hint">Ajoutez vos premières adresses Bitcoin ci-dessus</p>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="network-indicator">
+        <div class="dot-success"></div>
+        <span>NETWORK</span>
+        <span style="color:#C9A84C;">TESTNET3</span>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <div class="page-header">
+        <h1 class="page-title">Address Book</h1>
+        <p class="page-subtitle">Trusted contacts for autocomplete in the send form</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:start;">
+
+        <div class="luxe-card" style="padding:24px;">
+          <div style="font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:#C9A84C;border-left:2px solid #C9A84C;padding-left:12px;margin-bottom:20px;">Add New Contact</div>
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Label</label>
+            <input type="text" class="input-field" [(ngModel)]="newLabel" placeholder="e.g. Alice" />
+          </div>
+          <div style="margin-bottom:20px;">
+            <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Bitcoin Address</label>
+            <input type="text" class="input-field" style="font-family:'JetBrains Mono',monospace;font-size:12px;" [(ngModel)]="newAddress" placeholder="tb1q... or m..." />
+          </div>
+          <button class="btn-gold" style="width:100%;padding:12px;" (click)="addContact()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:inline;margin-right:6px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Save Contact
+          </button>
+          <div *ngIf="message" style="margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;text-align:center;font-family:'JetBrains Mono',monospace;"
+               [style.background]="message.includes('Erreur') ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)'"
+               [style.color]="message.includes('Erreur') ? '#EF4444' : '#22C55E'"
+               [style.border]="message.includes('Erreur') ? '0.5px solid rgba(239,68,68,0.3)' : '0.5px solid rgba(34,197,94,0.3)'">
+            {{ message }}
+          </div>
+        </div>
+
+        <div class="luxe-card" style="padding:24px;">
+          <div style="font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:#C9A84C;border-left:2px solid #C9A84C;padding-left:12px;margin-bottom:20px;">
+            All Contacts <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,255,255,0.3);font-weight:normal;">({{ contacts.length }})</span>
+          </div>
+
+          <div *ngIf="contacts.length === 0" style="border:0.5px dashed rgba(255,255,255,0.08);border-radius:12px;padding:48px;text-align:center;">
+            <div style="font-size:40px;margin-bottom:16px;opacity:0.3;">&#128100;</div>
+            <p style="color:rgba(255,255,255,0.3);font-size:14px;margin-bottom:6px;">No contacts yet</p>
+            <p style="color:rgba(255,255,255,0.15);font-size:12px;font-family:'JetBrains Mono',monospace;">Add your first Bitcoin address above</p>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div *ngFor="let contact of contacts"
+                 class="luxe-card-hover"
+                 style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.06);border-radius:10px;transition:all 0.2s;">
+              <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#C9A84C,#E8C96A);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#050507;flex-shrink:0;">
+                {{ contact.label?.charAt(0)?.toUpperCase() }}
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:14px;font-weight:500;color:#e8e0c8;margin-bottom:3px;">{{ contact.label }}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ contact.address }}</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.2);font-family:'JetBrains Mono',monospace;margin-top:2px;">Added {{ contact.createdAt | date:'dd/MM/yyyy' }}</div>
+              </div>
+              <button (click)="deleteContact(contact.id)"
+                      style="padding:7px 12px;font-size:12px;border:0.5px solid rgba(239,68,68,0.3);border-radius:7px;background:rgba(239,68,68,0.08);color:#EF4444;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;flex-shrink:0;"
+                      onmouseover="this.style.background='rgba(239,68,68,0.15)'"
+                      onmouseout="this.style.background='rgba(239,68,68,0.08)'">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </div>

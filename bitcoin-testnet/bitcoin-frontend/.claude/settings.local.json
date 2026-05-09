@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\HP\\\\IdeaProjects\\\\bitcoin-testnet\\\\bitcoin-testnet\\\\bitcoin-frontend\\\\src\" -Recurse -Force | Select-Object FullName | ForEach-Object { $_.FullName })",
+      "Bash(npm list *)",
+      "Bash(npx ng *)"
+    ]
+  }
+}

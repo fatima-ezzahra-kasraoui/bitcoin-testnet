@@ -16,13 +16,28 @@ export class ContactsComponent implements OnInit {
   newLabel = '';
   newAddress = '';
   message = '';
+  currentPage = 'contacts';
 
   constructor(
     private bitcoinService: BitcoinService,
     private router: Router
   ) {}
 
+  private isTokenExpired(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch { return true; }
+  }
+
   ngOnInit() {
+    if (this.isTokenExpired()) {
+      localStorage.clear();
+      this.router.navigate(['/login']);
+      return;
+    }
     this.loadContacts();
   }
 
@@ -68,4 +83,11 @@ export class ContactsComponent implements OnInit {
   goBack() {
     this.router.navigate(['/dashboard']);
   }
+
+  goToDashboard() { this.router.navigate(['/dashboard']); }
+  goToWallet(address: any) { this.router.navigate(['/wallet']); }
+  goToSecurity() { this.router.navigate(['/security']); }
+  goToContacts() { this.router.navigate(['/contacts']); }
+  goToProfile() { this.router.navigate(['/profile']); }
+  logout() { localStorage.clear(); this.router.navigate(['/login']); }
 }

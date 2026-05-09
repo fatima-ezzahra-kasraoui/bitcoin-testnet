@@ -47,6 +47,21 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("available", available));
     }
 
+    @PostMapping("/skip-mfa")
+    public ResponseEntity<?> skipMfa(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body(Map.of("error", "No token provided"));
+        }
+        String token = authHeader.substring(7);
+        if (!jwtService.isTokenValid(token)) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid or expired token"));
+        }
+        String username = jwtService.extractUsername(token);
+        String fullToken = jwtService.generateToken(username);
+        return ResponseEntity.ok(Map.of("token", fullToken, "username", username));
+    }
+
     @PostMapping("/mfa/setup")
     public ResponseEntity<MfaSetupResponse> setupMfa(
             @RequestHeader("Authorization") String authHeader) {

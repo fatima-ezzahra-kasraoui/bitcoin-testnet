@@ -1,9 +1,10 @@
-import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BitcoinService } from '../../services/bitcoin';
-
+import * as THREE from 'three';
+import { gsap } from 'gsap';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -11,42 +12,52 @@ import { BitcoinService } from '../../services/bitcoin';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   wallets: any[] = [];
   transactions: { [address: string]: any[] } = {};
   balances: { [address: string]: string } = {};
   userId = '';
   selectedWallet: string | null = null;
 
-  // TestNet status
   isConnected = false;
   peerCount = 0;
   private statusInterval: any;
 
-  // Toast
   toastMessage: string = '';
   toastVisible: boolean = false;
 
-  // Filters (applied to the open transaction panel)
   txFilter = { status: '', from: '', to: '', sort: 'date' };
 
-  // Notifications
   notifications: any[] = [];
   unreadCount = 0;
   notifDropdownOpen = false;
   private notifInterval: any;
 
-  // Pending confirmations
   pendingConfirmationCount = 0;
   private pendingConfirmationAddress: string | null = null;
 
-  // Inline label editing
   editingWallet: string | null = null;
   editLabelValue = '';
 
+  private coinCleanup: (() => void) | null = null;
+
   constructor(private bitcoinService: BitcoinService, private router: Router) {}
 
+  private isTokenExpired(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch { return true; }
+  }
+
   ngOnInit() {
+    if (this.isTokenExpired()) {
+      localStorage.clear();
+      this.router.navigate(['/login']);
+      return;
+    }
     this.userId = localStorage.getItem('userId') || '';
     this.loadWallets();
     this.checkStatus();
@@ -59,9 +70,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }, 15000);
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      gsap.fromTo('.sidebar', { x: -280, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power3.out' });
+      gsap.fromTo('.topbar', { y: -64, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, delay: 0.2 });
+      gsap.fromTo('[class*="cascade-"]', { y: 30, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.08, duration: 0.6, delay: 0.3, ease: 'power2.out' });
+    }, 100);
+  }
+
   ngOnDestroy() {
     if (this.statusInterval) clearInterval(this.statusInterval);
     if (this.notifInterval) clearInterval(this.notifInterval);
+    this.coinCleanup?.();
   }
 
   @HostListener('document:click')
@@ -142,7 +162,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Notifications
   loadNotifications() {
     this.bitcoinService.getNotifications().subscribe({
       next: (res) => {
@@ -194,13 +213,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }, 150);
   }
 
-  // Faucet
   openFaucet(address: string) {
     window.open('https://coinfaucet.eu/en/btc-testnet/', '_blank');
     navigator.clipboard.writeText(address).then(() => {
-      this.showToast(`✅ Adresse copiée : ${address}\n📋 Collez-la sur le site du faucet !`);
+      this.showToast(`Adresse copiée : ${address} — Collez-la sur le site du faucet !`);
     }).catch(() => {
-      this.showToast(`📋 Copiez manuellement : ${address}`);
+      this.showToast(`Copiez manuellement : ${address}`);
     });
   }
 

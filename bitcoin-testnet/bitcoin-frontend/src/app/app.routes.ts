@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { LandingComponent } from './components/landing/landing';
 import { LoginComponent } from './components/login/login';
 import { DashboardComponent } from './components/dashboard/dashboard';
 import { WalletComponent } from './components/wallet/wallet';
@@ -9,7 +10,7 @@ import { RegisterComponent } from './components/register/register';
 import { MfaSetupComponent } from './components/mfa-setup/mfa-setup';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', component: LandingComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'mfa-setup', component: MfaSetupComponent },
@@ -18,5 +19,5 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'contacts', component: ContactsComponent },
   { path: 'security', component: SecurityComponent },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '' }
 ];

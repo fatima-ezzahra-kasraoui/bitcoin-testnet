@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BitcoinService } from '../../services/bitcoin';
+import { gsap } from 'gsap';
 import QRCode from 'qrcode';
 
 @Component({
@@ -12,7 +13,7 @@ import QRCode from 'qrcode';
   templateUrl: './wallet.html',
   styleUrl: './wallet.css'
 })
-export class WalletComponent implements OnInit, OnDestroy {
+export class WalletComponent implements OnInit, OnDestroy, AfterViewInit {
   fromAddress = '';
   toAddress = '';
   amount = 0;
@@ -25,19 +26,19 @@ export class WalletComponent implements OnInit, OnDestroy {
   showSuggestions = false;
   filteredContacts: any[] = [];
 
-  // Confirmation modal state
   showConfirmationModal = false;
   pendingTxData: any = null;
   countdown = '10:00';
   isCountdownUrgent = false;
   private countdownInterval: any;
 
-  // QR code modal state
   showQrModal = false;
   qrCodeDataUrl = '';
   selectedWalletAddress = '';
   copiedToast = false;
   private copyToastTimer: any;
+
+  currentPage = 'wallet';
 
   constructor(
     private bitcoinService: BitcoinService,
@@ -45,13 +46,37 @@ export class WalletComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute
   ) {}
 
+  private isTokenExpired(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch { return true; }
+  }
+
   ngOnInit() {
+    if (this.isTokenExpired()) {
+      localStorage.clear();
+      this.router.navigate(['/login']);
+      return;
+    }
     this.route.queryParams.subscribe(params => {
       if (params['address']) {
         this.fromAddress = params['address'];
       }
     });
     this.loadContacts();
+  }
+
+  ngAfterViewInit() {
+    if (window.innerWidth < 768) return;
+
+    setTimeout(() => {
+      try {
+        gsap.fromTo('.luxe-card', { y: 30, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.15, duration: 0.6, ease: 'power2.out' });
+      } catch (e) {}
+    }, 100);
   }
 
   ngOnDestroy() {
@@ -101,8 +126,6 @@ export class WalletComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ── QR Code ────────────────────────────────────────────────
-
   generateQrCode(address: string) {
     this.selectedWalletAddress = address;
     QRCode.toDataURL(address, {
@@ -136,8 +159,6 @@ export class WalletComponent implements OnInit, OnDestroy {
       this.copyToastTimer = setTimeout(() => this.copiedToast = false, 2000);
     });
   }
-
-  // ── Send Transaction ────────────────────────────────────────
 
   sendTransaction() {
     if (!this.fromAddress) {
@@ -235,4 +256,11 @@ export class WalletComponent implements OnInit, OnDestroy {
   goBack() {
     this.router.navigate(['/dashboard']);
   }
+
+  goToDashboard() { this.router.navigate(['/dashboard']); }
+  goToSecurity() { this.router.navigate(['/security']); }
+  goToContacts() { this.router.navigate(['/contacts']); }
+  goToProfile() { this.router.navigate(['/profile']); }
+  goToWallet(address: any) { this.router.navigate(['/wallet']); }
+  logout() { localStorage.clear(); this.router.navigate(['/login']); }
 }

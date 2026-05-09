@@ -1,0 +1,312 @@
+<div class="landing-page">
+
+  <!-- NAV -->
+  <nav class="landing-nav">
+    <div class="nav-logo">
+      <div class="logo-circle">&#x20BF;</div>
+      <div>
+        <div class="logo-name">AURUM</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Trade</a>
+      <a href="#security">Security</a>
+      <a href="#reviews">Community</a>
+      <a href="#partners">Partners</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-nav-ghost" (click)="goToLogin()">Sign In</button>
+      <button class="btn-nav-primary" (click)="goToRegister()">Get Started &rarr;</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-section">
+    <div class="hero-bg-glow"></div>
+    <div class="hero-grid-overlay"></div>
+
+    <div class="hero-left">
+
+      <h1 class="hero-title">
+        The <span class="text-gold">Sovereign</span><br/>
+        Bitcoin<br/>
+        Workbench
+      </h1>
+      <p class="hero-desc">
+        A full-stack TestNet platform for blockchain developers and
+        security researchers. Encrypted vaults, ECDSA signing, behavioral
+        anomaly detection, and a Kafka-streamed ledger — all wrapped in
+        obsidian and gold.
+      </p>
+      <div class="hero-btns">
+        <button class="btn-primary-hero" (click)="goToRegister()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Enter the Vault
+        </button>
+        <button class="btn-secondary-hero" (click)="goToLogin()">Sign In &rarr;</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-value">AES-256</div>
+          <div class="stat-label">Key Encryption</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">&lt;200ms</div>
+          <div class="stat-label">Tx Stream</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">5 Rules</div>
+          <div class="stat-label">Anomaly Engine</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Keys Logged</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="coin-container">
+        <canvas #coinCanvas style="width:100%;height:100%;display:block;"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section" id="features">
+    <div class="section-label">CAPABILITY MATRIX</div>
+    <h2 class="section-title">Eight pillars of <span class="text-gold">on-chain control</span></h2>
+    <p class="section-desc">Every feature is engineered for a single goal: give you total visibility and absolute custody of your TestNet assets.</p>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon-wrap">
+          <svg width="22" height="22" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        </div>
+        <h3 class="feat-title">Multi-Wallet Vault</h3>
+        <p class="feat-desc">Generate unlimited TestNet addresses with AES-256 encrypted private keys, never exposed beyond the signing module.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon-wrap">
+          <svg width="22" height="22" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <h3 class="feat-title">Live Transaction Stream</h3>
+        <p class="feat-desc">Kafka-driven event pipeline tracks every tx from PENDING to CONFIRMED with sub-second updates and real-time status.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon-wrap">
+          <svg width="22" height="22" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        </div>
+        <h3 class="feat-title">Anomaly Detection</h3>
+        <p class="feat-desc">Five behavioral rules score every transfer in real time: unusual amount, new destination, rapid fire, off-hours, round amount.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon-wrap">
+          <svg width="22" height="22" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        </div>
+        <h3 class="feat-title">ECDSA Signing</h3>
+        <p class="feat-desc">Cryptographically prove ownership of any address by signing arbitrary messages — verify with one click using the public key.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon-wrap">
+          <svg width="22" height="22" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </div>
+        <h3 class="feat-title">Real-time Alerts</h3>
+        <p class="feat-desc">In-app bell with security warnings, confirmation events, and threat intelligence pushed instantly via the notification engine.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon-wrap">
+          <svg width="22" height="22" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <h3 class="feat-title">Trusted Address Book</h3>
+        <p class="feat-desc">Save contacts, mark as trusted, autocomplete in send forms — reduce mistyped destinations to zero with one-click selection.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon-wrap">
+          <svg width="22" height="22" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <h3 class="feat-title">MFA by Default</h3>
+        <p class="feat-desc">Google Authenticator TOTP enrollment with QR setup. Two-step login on every session — your vault, your rules.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon-wrap">
+          <svg width="22" height="22" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3 class="feat-title">PDF Security Reports</h3>
+        <p class="feat-desc">Generate downloadable forensic reports with risk timelines, top risky transactions, rule heatmaps, and security tips.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECURITY SECTION -->
+  <section class="security-section" id="security">
+    <div class="security-left">
+      <div class="section-label">SECURITY BY DESIGN</div>
+      <h2 class="security-title">Your keys.<br/><span class="text-gold">Your kingdom.</span></h2>
+      <div class="security-items">
+        <div class="security-item">
+          <div class="sec-icon">
+            <svg width="18" height="18" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <div>
+            <div class="sec-item-title">Private keys encrypted at rest with AES-256-GCM</div>
+            <div class="sec-item-desc">Decrypted only transiently in memory for signing — zeroed immediately after use.</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="sec-icon">
+            <svg width="18" height="18" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <div>
+            <div class="sec-item-title">Stateless JWT authentication on every route</div>
+            <div class="sec-item-desc">No session storage, no replay window, MFA-gated token rotation.</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="sec-icon">
+            <svg width="18" height="18" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <div>
+            <div class="sec-item-title">Behavioral risk engine on every transaction</div>
+            <div class="sec-item-desc">Five rules score outgoing transfers in real time and emit alerts via Kafka consumer.</div>
+          </div>
+        </div>
+        <div class="security-item">
+          <div class="sec-icon">
+            <svg width="18" height="18" fill="none" stroke="#C9A84C" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          </div>
+          <div>
+            <div class="sec-item-title">Zero key material in logs, ever</div>
+            <div class="sec-item-desc">Audited log pipelines redact all sensitive fields at the source, not at display time.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="security-right">
+      <div class="risk-monitor-card">
+        <div class="risk-monitor-header">
+          <span class="mono-text">RISK MONITOR · LIVE</span>
+          <span class="live-dot"></span>
+        </div>
+        <div class="risk-rows">
+          <div class="risk-row"><span class="risk-hash">tx 8f3a..2b9c</span><span class="risk-status clean">CLEAN</span><span class="risk-score">risk 8</span></div>
+          <div class="risk-row"><span class="risk-hash">tx 1a4b..7c0d</span><span class="risk-status suspicious">SUSPICIOUS</span><span class="risk-score warn">risk 78</span></div>
+          <div class="risk-row"><span class="risk-hash">tx 5e8f..1a4b</span><span class="risk-status critical">CRITICAL</span><span class="risk-score danger">risk 92</span></div>
+          <div class="risk-row"><span class="risk-hash">tx 2b5c..8d1e</span><span class="risk-status clean">CLEAN</span><span class="risk-score">risk 12</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTNERS -->
+  <section class="partners-section" id="partners">
+    <div class="section-label">TRUSTED ECOSYSTEM</div>
+    <h2 class="section-title-sm">Built on industry-grade <span class="text-gold">open-source foundations</span></h2>
+    <div class="partners-grid">
+      <div class="partner-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        <span>Spring Boot</span>
+      </div>
+      <div class="partner-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <span>Apache Kafka</span>
+      </div>
+      <div class="partner-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm0 18a8 8 0 110-16 8 8 0 010 16zm-1-5h2v2h-2v-2zm0-8h2v6h-2V7z"/></svg>
+        <span>MongoDB</span>
+      </div>
+      <div class="partner-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#C9A84C"><polygon points="12,2 22,20 2,20"/></svg>
+        <span>Angular</span>
+      </div>
+      <div class="partner-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#C9A84C"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2" stroke="#050507" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+        <span>BitcoinJ</span>
+      </div>
+      <div class="partner-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <span>JWT · AES-256</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews-section" id="reviews">
+    <div class="section-label">COMMUNITY VOICES</div>
+    <h2 class="section-title-sm">Trusted by <span class="text-gold">developers worldwide</span></h2>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"The anomaly detection engine is incredible. It caught a suspicious pattern in my test transactions that I hadn't even noticed. The risk scoring system is exactly what blockchain devs need."</p>
+        <div class="review-author">
+          <div class="author-avatar">SK</div>
+          <div>
+            <div class="author-name">Satoshi K.</div>
+            <div class="author-role">Blockchain Developer · Tokyo</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"Finally a TestNet client that takes security seriously. AES-256 encrypted keys, MFA by default, and the PDF security reports are something I didn't know I needed until I used it."</p>
+        <div class="review-author">
+          <div class="author-avatar">MA</div>
+          <div>
+            <div class="author-name">Maria A.</div>
+            <div class="author-role">Security Researcher · Berlin</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">"The Kafka-streamed transaction confirmations and real-time status updates make this the most professional TestNet tool I've ever used. The UI is breathtaking — obsidian and gold."</p>
+        <div class="review-author">
+          <div class="author-avatar">JL</div>
+          <div>
+            <div class="author-name">James L.</div>
+            <div class="author-role">Full-Stack Dev · London</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-glow"></div>
+    <div class="cta-content">
+      <h2 class="cta-title">Forge keys. Move sats. <span class="text-gold">Sleep easy.</span></h2>
+      <p class="cta-desc">All TestNet, all the time. Practice real custody flows without risking a single satoshi.</p>
+      <div class="cta-btns">
+        <button class="btn-primary-hero" (click)="goToRegister()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Open the Vault
+        </button>
+        <button class="btn-secondary-hero" (click)="goToLogin()">Already have an account</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="landing-footer">
+    <div class="footer-left">
+      <div class="nav-logo">
+        <div class="logo-circle">&#x20BF;</div>
+        <div>
+          <div class="logo-name">AURUM</div>
+        </div>
+      </div>
+      <p class="footer-note">AURUM · Copyright 2026</p>
+    </div>
+    <div class="footer-links">
+      <span>Features</span>
+      <span>Security</span>
+      <span>Partners</span>
+      <span>Community</span>
+    </div>
+  </footer>
+
+</div>

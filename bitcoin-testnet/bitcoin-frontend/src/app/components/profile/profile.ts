@@ -4,18 +4,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BitcoinService } from '../../services/bitcoin';
-import { QRCodeComponent } from 'angularx-qrcode';
-
+import * as QRCode from 'qrcode';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, QRCodeComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile.html',
   styleUrl: './profile.css'
 })
 export class ProfileComponent implements OnInit {
 
   userId = '';
+  currentPage = 'profile';
   wallets: any[] = [];
   balances: { [address: string]: string } = {};
   transactions: { [address: string]: any[] } = {};
@@ -68,7 +68,21 @@ export class ProfileComponent implements OnInit {
     private router: Router
   ) {}
 
+  private isTokenExpired(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch { return true; }
+  }
+
   ngOnInit() {
+    if (this.isTokenExpired()) {
+      localStorage.clear();
+      this.router.navigate(['/login']);
+      return;
+    }
     this.userId = localStorage.getItem('userId') || '';
     if (!this.userId) {
       this.router.navigate(['/login']);
@@ -219,6 +233,11 @@ export class ProfileComponent implements OnInit {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
+
+  goToWallet(address: any) { this.router.navigate(['/wallet']); }
+  goToSecurity() { this.router.navigate(['/security']); }
+  goToContacts() { this.router.navigate(['/contacts']); }
+  goToProfile() { this.router.navigate(['/profile']); }
   toggleCurrentPassword() {
     this.showCurrentPassword = !this.showCurrentPassword;
   }
@@ -248,6 +267,9 @@ export class ProfileComponent implements OnInit {
     this.mfaConfirmPassword = '';
     this.mfaError = '';
     this.showMfaQr = false;
+    this.mfaSetupCode = '';
+    this.mfaQrCodeUrl = '';
+    this.mfaSecretKey = '';
   }
 
   closeMfaDialog() {
@@ -259,7 +281,7 @@ export class ProfileComponent implements OnInit {
     this.isProcessingMfa = false;
   }
 
-  confirmMfaAction() {
+  async confirmMfaAction(): Promise<void> {
     if (!this.mfaConfirmPassword) {
       this.mfaError = 'Veuillez entrer votre mot de passe';
       return;
@@ -269,22 +291,34 @@ export class ProfileComponent implements OnInit {
 
     if (this.mfaAction === 'enable') {
       this.bitcoinService.enableMfa(this.mfaConfirmPassword).subscribe({
-        next: (res) => {
-          this.isProcessingMfa = false;
+        next: async (res) => {
           if (res.requiresSetup) {
-            this.mfaQrCodeUrl = res.qrCodeUrl;
-            this.mfaSecretKey = res.secret;
+            // First-time setup: qrCodeUrl is an otpauth:// URI — render locally to base64 PNG
+            const otpauthUri = res.qrCodeUrl || res.otpAuthUrl || res.uri || '';
+            this.mfaSecretKey = res.secret || res.secretKey || res.manualEntryKey || '';
+            try {
+              this.mfaQrCodeUrl = await QRCode.toDataURL(otpauthUri, {
+                width: 250,
+                margin: 2,
+                color: { dark: '#000000', light: '#ffffff' }
+              });
+            } catch (err) {
+              console.error('QR generation error:', err);
+              this.mfaQrCodeUrl = '';
+            }
             this.showMfaQr = true;
           } else {
+            // TOTP secret already existed — backend re-enabled without regenerating QR
             this.mfaEnabled = true;
-            this.mfaMessage = 'MFA activé avec succès';
+            this.mfaMessage = 'Two-factor authentication enabled successfully';
             this.closeMfaDialog();
-            setTimeout(() => this.mfaMessage = '', 3000);
+            setTimeout(() => this.mfaMessage = '', 4000);
           }
+          this.isProcessingMfa = false;
         },
         error: (err) => {
           this.isProcessingMfa = false;
-          this.mfaError = err.error?.message || 'Mot de passe invalide';
+          this.mfaError = err.error?.message || 'Invalid password';
         }
       });
     } else {
@@ -292,15 +326,22 @@ export class ProfileComponent implements OnInit {
         next: () => {
           this.isProcessingMfa = false;
           this.mfaEnabled = false;
-          this.mfaMessage = 'MFA désactivé avec succès';
+          this.mfaMessage = 'Two-factor authentication disabled successfully';
           this.closeMfaDialog();
-          setTimeout(() => this.mfaMessage = '', 3000);
+          setTimeout(() => this.mfaMessage = '', 4000);
         },
         error: (err) => {
           this.isProcessingMfa = false;
-          this.mfaError = err.error?.message || 'Mot de passe invalide';
+          this.mfaError = err.error?.message || 'Invalid password';
         }
       });
+    }
+  }
+
+  onQrImageError(event: any) {
+    console.error('QR image failed to load:', this.mfaQrCodeUrl);
+    if (this.mfaQrCodeUrl && !this.mfaQrCodeUrl.startsWith('http') && !this.mfaQrCodeUrl.startsWith('data:')) {
+      this.mfaQrCodeUrl = 'https://chart.googleapis.com/chart?cht=qr&chs=250x250&chl=' + encodeURIComponent(this.mfaQrCodeUrl);
     }
   }
 
@@ -317,12 +358,12 @@ export class ProfileComponent implements OnInit {
         this.isProcessingMfa = false;
         this.mfaEnabled = true;
         this.closeMfaDialog();
-        this.mfaMessage = 'MFA activé avec succès !';
-        setTimeout(() => this.mfaMessage = '', 3000);
+        this.mfaMessage = 'Two-factor authentication enabled successfully';
+        setTimeout(() => this.mfaMessage = '', 4000);
       },
       error: () => {
         this.isProcessingMfa = false;
-        this.mfaError = 'Code invalide. Réessayez.';
+        this.mfaError = 'Invalid code. Please check Google Authenticator and try again.';
         this.mfaSetupCode = '';
       }
     });

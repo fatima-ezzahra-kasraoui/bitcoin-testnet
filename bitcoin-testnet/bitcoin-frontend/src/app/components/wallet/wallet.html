@@ -1,89 +1,144 @@
-<div class="wallet-container">
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="btc-icon">₿</div>
-      <span class="brand">Transactions & Signatures</span>
-    </div>
-    <button class="btn-back" (click)="goBack()">Retour</button>
-  </div>
-
-  <div class="main-content">
-    <div class="grid-2">
-
-      <div class="panel">
-        <div class="panel-title">Envoyer une transaction</div>
-        <div class="form-group">
-          <label>Adresse source</label>
-          <div class="address-row">
-            <input type="text" [(ngModel)]="fromAddress" placeholder="Adresse source" />
-            <button class="qr-btn" *ngIf="fromAddress" (click)="generateQrCode(fromAddress)" title="Show QR Code">▣ QR</button>
-          </div>
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="logo-mark">&#x20BF;</div>
+        <div>
+          <div class="logo-text-main">AURUM</div>
         </div>
-        <div class="form-group">
-          <label>Adresse destination</label>
-          <input
-            type="text"
-            [(ngModel)]="toAddress"
-            (input)="filterContacts()"
-            (focus)="showSuggestions = true"
-            placeholder="Tapez une adresse ou sélectionnez un contact..."
-            class="form-input" />
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item" [class.active]="currentPage === 'dashboard'" (click)="goToDashboard()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        Wallets
+      </div>
+      <div class="nav-item" [class.active]="currentPage === 'wallet'" (click)="goToWallet(null)">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+        Send &amp; Sign
+      </div>
+      <div class="nav-item" [class.active]="currentPage === 'security'" (click)="goToSecurity()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Security
+      </div>
+      <div class="nav-item" [class.active]="currentPage === 'contacts'" (click)="goToContacts()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Address Book
+      </div>
+      <div class="nav-item" [class.active]="currentPage === 'profile'" (click)="goToProfile()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        Profile
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="nav-item" style="color:#EF4444;" (click)="logout()">
+        <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Lock Vault
+      </div>
+    </div>
+  </aside>
 
-          <div class="suggestions-dropdown" *ngIf="showSuggestions && filteredContacts.length > 0">
-            <div
-              *ngFor="let contact of filteredContacts"
-              class="suggestion-item"
-              (click)="selectContact(contact)">
-              <div class="suggestion-avatar">👤</div>
-              <div class="suggestion-info">
-                <span class="suggestion-label">{{ contact.label }}</span>
-                <span class="suggestion-address">{{ contact.address }}</span>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="network-indicator">
+        <div class="logo-mark" style="width:32px;height:32px;font-size:15px;">&#x20BF;</div>
+        <span style="font-family:'Cinzel',serif;font-size:14px;font-weight:500;color:#e8e0c8;margin-left:8px;">Transactions &amp; Signatures</span>
+      </div>
+      <button class="btn-ghost" style="padding:8px 16px;font-size:13px;" (click)="goBack()">&larr; Dashboard</button>
+    </header>
+
+    <main class="page-main">
+      <div class="page-header">
+        <h1 class="page-title">Send &amp; Sign</h1>
+        <p class="page-subtitle">Broadcast to Bitcoin TestNet3 mempool · ECDSA signing</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+
+        <!-- Send Transaction Panel -->
+        <div class="luxe-card" style="padding:32px;">
+          <div class="panel-title">Send Transaction</div>
+
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Source Address</label>
+            <div class="address-row">
+              <input type="text" class="input-field" [(ngModel)]="fromAddress" placeholder="Source address" />
+              <button class="qr-btn" *ngIf="fromAddress" (click)="generateQrCode(fromAddress)">&#9638; QR</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px;position:relative;">
+            <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Destination Address</label>
+            <input type="text" class="input-field form-input"
+              [(ngModel)]="toAddress"
+              (input)="filterContacts()"
+              (focus)="showSuggestions = true"
+              placeholder="Type address or select contact..." />
+            <div class="suggestions-dropdown" *ngIf="showSuggestions && filteredContacts.length > 0">
+              <div *ngFor="let contact of filteredContacts" class="suggestion-item" (click)="selectContact(contact)">
+                <div class="suggestion-avatar">&#128100;</div>
+                <div>
+                  <div class="suggestion-label">{{ contact.label }}</div>
+                  <div class="suggestion-address">{{ contact.address }}</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label>Montant (satoshis)</label>
-          <input type="number" [(ngModel)]="amount" placeholder="0" />
-        </div>
-        <button class="btn-primary" (click)="sendTransaction()">Envoyer</button>
 
-        <div *ngIf="txResult" class="result-box">
-          <div class="result-row">
-            <span class="result-label">Status</span>
-            <span class="status-badge">{{ txResult.status }}</span>
+          <div style="margin-bottom:24px;">
+            <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Amount (satoshis)</label>
+            <input type="number" class="input-field" [(ngModel)]="amount" placeholder="0" />
           </div>
-          <div class="result-row">
-            <span class="result-label">Montant</span>
-            <span class="result-value">{{ txResult.amount }} satoshis</span>
+
+          <button class="btn-gold" style="width:100%;padding:13px;margin-bottom:20px;font-size:14px;" (click)="sendTransaction()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:inline;margin-right:6px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+            Send Transaction
+          </button>
+
+          <div *ngIf="txResult" style="background:rgba(0,0,0,0.3);border:0.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span class="result-label">Status</span>
+              <span class="status-badge">{{ txResult.status }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="result-label">Amount</span>
+              <span class="result-value">{{ txResult.amount }} satoshis</span>
+            </div>
+          </div>
+
+          <p *ngIf="message" class="success-msg">{{ message }}</p>
+        </div>
+
+        <!-- Sign Message Panel -->
+        <div class="luxe-card" style="padding:32px;">
+          <div class="panel-title">Sign Message</div>
+
+          <div style="margin-bottom:16px;">
+            <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Address</label>
+            <div class="address-row">
+              <input type="text" class="input-field" [(ngModel)]="fromAddress" placeholder="Wallet address" />
+              <button class="qr-btn" *ngIf="fromAddress" (click)="generateQrCode(fromAddress)">&#9638; QR</button>
+            </div>
+          </div>
+
+          <div style="margin-bottom:24px;">
+            <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Message</label>
+            <input type="text" class="input-field" [(ngModel)]="messageText" placeholder="Message to sign" />
+          </div>
+
+          <button class="btn-gold" style="width:100%;padding:13px;margin-bottom:20px;font-size:14px;" (click)="signMessage()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:inline;margin-right:6px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+            Sign with Private Key
+          </button>
+
+          <div *ngIf="signature" style="background:rgba(0,0,0,0.3);border:0.5px solid rgba(201,168,76,0.2);border-radius:10px;padding:16px;">
+            <div class="result-label" style="margin-bottom:8px;">Signature (ECDSA)</div>
+            <div class="signature-value">{{ signature }}</div>
           </div>
         </div>
 
-        <p *ngIf="message" class="success-msg">{{ message }}</p>
       </div>
-
-      <div class="panel">
-        <div class="panel-title">Signer un message</div>
-        <div class="form-group">
-          <label>Adresse</label>
-          <div class="address-row">
-            <input type="text" [(ngModel)]="fromAddress" placeholder="Adresse du wallet" />
-            <button class="qr-btn" *ngIf="fromAddress" (click)="generateQrCode(fromAddress)" title="Show QR Code">▣ QR</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Message</label>
-          <input type="text" [(ngModel)]="messageText" placeholder="Message à signer" />
-        </div>
-        <button class="btn-primary" (click)="signMessage()">Signer</button>
-
-        <div *ngIf="signature" class="result-box">
-          <div class="result-label">Signature</div>
-          <div class="signature-value">{{ signature }}</div>
-        </div>
-      </div>
-
-    </div>
+    </main>
   </div>
 </div>
 
@@ -94,10 +149,10 @@
     <img [src]="qrCodeDataUrl" alt="QR Code" class="qr-image" />
     <p class="qr-address">{{ selectedWalletAddress }}</p>
     <p class="qr-hint">Scan to receive Bitcoin TestNet</p>
-    <div *ngIf="copiedToast" class="copied-toast">✓ Copied!</div>
+    <div *ngIf="copiedToast" class="copied-toast">&#10003; Copied!</div>
     <div class="qr-actions">
-      <button class="btn-copy" (click)="copyAddress(selectedWalletAddress)">Copy Address</button>
-      <button class="btn-download" (click)="downloadQr()">Download QR</button>
+      <button class="btn-copy" (click)="copyAddress(selectedWalletAddress)">Copy</button>
+      <button class="btn-download" (click)="downloadQr()">Download</button>
       <button class="btn-close" (click)="closeQrModal()">Close</button>
     </div>
   </div>
@@ -106,48 +161,41 @@
 <!-- High-Risk Confirmation Modal -->
 <div class="modal-overlay" *ngIf="showConfirmationModal" (click)="$event.stopPropagation()">
   <div class="modal-card">
-
     <div class="modal-header">
-      <span class="modal-warning-icon">⚠️</span>
+      <span class="modal-warning-icon">&#9888;</span>
       <span class="modal-title">High Risk Transaction Detected</span>
     </div>
-
     <div class="modal-body">
-      <div class="risk-score-row">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
         <span class="risk-label">Risk Score</span>
         <span class="risk-badge" [class]="'risk-' + getRiskLevel(pendingTxData?.riskScore)">
-          {{ pendingTxData?.riskScore }} — {{ getRiskLabel(pendingTxData?.riskScore) }}
+          {{ pendingTxData?.riskScore }} &mdash; {{ getRiskLabel(pendingTxData?.riskScore) }}
         </span>
       </div>
-
-      <div class="rules-section" *ngIf="pendingTxData?.triggeredRules?.length">
-        <span class="rules-label">Règles déclenchées</span>
-        <div class="rules-chips">
+      <div *ngIf="pendingTxData?.triggeredRules?.length">
+        <span class="rules-label">Triggered Rules</span>
+        <div class="rules-chips" style="margin-top:8px;">
           <span *ngFor="let rule of pendingTxData.triggeredRules" class="rule-chip">{{ rule }}</span>
         </div>
       </div>
-
       <div class="tx-details">
-        <div class="tx-detail-row">
+        <div style="display:flex;justify-content:space-between;">
           <span class="tx-detail-label">Destination</span>
           <span class="tx-detail-value mono">{{ pendingTxData?.toAddress }}</span>
         </div>
-        <div class="tx-detail-row">
-          <span class="tx-detail-label">Montant</span>
+        <div style="display:flex;justify-content:space-between;">
+          <span class="tx-detail-label">Amount</span>
           <span class="tx-detail-value">{{ pendingTxData?.amount }} satoshis</span>
         </div>
       </div>
-
-      <div class="countdown-row">
-        <span class="countdown-label">Expire dans</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px 16px;">
+        <span class="countdown-label">Expires in</span>
         <span class="countdown-timer" [class.countdown-urgent]="isCountdownUrgent">{{ countdown }}</span>
       </div>
     </div>
-
     <div class="modal-actions">
-      <button class="btn-modal-cancel" (click)="cancelTx()">Annuler la transaction</button>
-      <button class="btn-modal-confirm" (click)="confirmTx()">Je confirme, envoyer quand même</button>
+      <button class="btn-modal-cancel" (click)="cancelTx()">Cancel Transaction</button>
+      <button class="btn-modal-confirm" (click)="confirmTx()">Confirm &amp; Send</button>
     </div>
-
   </div>
 </div>

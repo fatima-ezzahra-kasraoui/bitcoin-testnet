@@ -31,6 +31,10 @@ export class BitcoinService {
   }
 
   // MFA endpoints
+  skipMfaSetup(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/skip-mfa`, {}, { headers: this.getHeaders() });
+  }
+
   verifyMfa(code: string, preAuthToken: string): Observable<any> {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${preAuthToken}` });
     return this.http.post(`${this.apiUrl}/auth/mfa/verify`, { code }, { headers });
