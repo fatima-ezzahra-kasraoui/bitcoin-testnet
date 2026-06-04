@@ -18,7 +18,7 @@ Une application web full-stack de portefeuille Bitcoin sur le réseau **TestNet3
 - [Base de données](#base-de-données)
 - [Kafka](#kafka)
 - [Frontend Angular](#frontend-angular)
-- [Limitations connues](#limitations-connues)
+
 
 ---
 
